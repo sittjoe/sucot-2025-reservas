@@ -11,10 +11,17 @@ let reservations = JSON.parse(localStorage.getItem('sucotReservations')) || {
 
 let isAdminLoggedIn = false;
 
+// Carrito de reservas
+let cart = [];
+
+// Perfil de usuario
+let userProfile = JSON.parse(localStorage.getItem('userProfile')) || null;
+
 // Inicializar la aplicación
 document.addEventListener('DOMContentLoaded', () => {
     updateAvailability();
     displayReservations();
+    loadUserProfile();
 
     document.getElementById('bookingForm').addEventListener('submit', handleBooking);
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
@@ -81,11 +88,20 @@ function handleBooking(e) {
     // Generar código de confirmación
     const confirmationCode = `AV${reservation.id.toString().slice(-6)}`;
 
+    // Guardar código en la reserva
+    reservations[key][reservations[key].length - 1].codigo = confirmationCode;
+    saveReservations();
+
+    // Guardar perfil del usuario
+    saveUserProfile({ nombre, telefono, depto });
+
     // Mostrar confirmación detallada
     showConfirmationBox(reservation, confirmationCode, key);
 
-    // Limpiar formulario
-    document.getElementById('bookingForm').reset();
+    // Limpiar formulario (excepto datos personales)
+    document.getElementById('fecha').value = '';
+    document.getElementById('turno').value = '';
+    document.getElementById('personas').value = '';
 
     showNotification('¡Reserva realizada con éxito! 🎉', 'success');
 }
@@ -584,4 +600,270 @@ function resetReservations() {
         }
         showNotification('Todas las reservas han sido eliminadas', 'success');
     }
+}
+
+// ===== FUNCIONES DEL CARRITO =====
+
+// Agregar al carrito
+function addToCart() {
+    const fecha = document.getElementById('fecha').value;
+    const turno = document.getElementById('turno').value;
+    const nombre = document.getElementById('nombre').value.trim();
+    const depto = document.getElementById('depto').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const personas = parseInt(document.getElementById('personas').value);
+
+    // Validar campos
+    if (!fecha || !turno || !nombre || !depto || !telefono || !personas) {
+        showNotification('Por favor complete todos los campos', 'error');
+        return;
+    }
+
+    // Validar disponibilidad
+    const key = `${fecha}-${turno}`;
+    if (!reservations[key]) {
+        reservations[key] = [];
+    }
+
+    if (reservations[key].length >= MAX_MESAS_POR_TURNO) {
+        showNotification('No hay mesas disponibles para este horario', 'error');
+        return;
+    }
+
+    // Verificar si ya existe en el carrito
+    const exists = cart.some(item => item.fecha === fecha && item.turno === turno);
+    if (exists) {
+        showNotification('Esta reserva ya está en el carrito', 'warning');
+        return;
+    }
+
+    // Agregar al carrito
+    cart.push({
+        fecha,
+        turno,
+        nombre,
+        depto,
+        telefono,
+        personas
+    });
+
+    updateCartDisplay();
+    showNotification('✅ Agregado al carrito', 'success');
+
+    // Limpiar solo fecha y turno
+    document.getElementById('fecha').value = '';
+    document.getElementById('turno').value = '';
+}
+
+// Actualizar visualización del carrito
+function updateCartDisplay() {
+    const cartSection = document.getElementById('cartSection');
+    const cartItems = document.getElementById('cartItems');
+    const cartCount = document.getElementById('cartCount');
+
+    if (cart.length === 0) {
+        cartSection.style.display = 'none';
+        return;
+    }
+
+    cartSection.style.display = 'block';
+    cartCount.textContent = cart.length;
+
+    cartItems.innerHTML = cart.map((item, index) => `
+        <div class="cart-item">
+            <div class="cart-item-info">
+                <strong>${formatFecha(item.fecha)}</strong> - ${item.turno}
+                <br>
+                <small>${item.personas} personas</small>
+            </div>
+            <button class="btn-remove-cart" onclick="removeFromCart(${index})">❌</button>
+        </div>
+    `).join('');
+}
+
+// Remover del carrito
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartDisplay();
+    showNotification('Removido del carrito', 'success');
+}
+
+// Limpiar carrito
+function clearCart() {
+    if (confirm('¿Desea limpiar todo el carrito?')) {
+        cart = [];
+        updateCartDisplay();
+        showNotification('Carrito limpiado', 'success');
+    }
+}
+
+// Confirmar todas las reservas del carrito
+function confirmAllReservations() {
+    if (cart.length === 0) {
+        showNotification('El carrito está vacío', 'warning');
+        return;
+    }
+
+    let successCount = 0;
+    let codes = [];
+
+    cart.forEach(item => {
+        const key = `${item.fecha}-${item.turno}`;
+
+        if (!reservations[key]) {
+            reservations[key] = [];
+        }
+
+        // Verificar disponibilidad
+        if (reservations[key].length < MAX_MESAS_POR_TURNO) {
+            const reservation = {
+                id: Date.now() + successCount,
+                fecha: item.fecha,
+                turno: item.turno,
+                nombre: item.nombre,
+                depto: item.depto,
+                telefono: item.telefono,
+                personas: item.personas,
+                fechaReserva: new Date().toLocaleString('es-ES')
+            };
+
+            const confirmationCode = `AV${reservation.id.toString().slice(-6)}`;
+            reservation.codigo = confirmationCode;
+
+            reservations[key].push(reservation);
+            successCount++;
+            codes.push({
+                fecha: item.fecha,
+                turno: item.turno,
+                codigo: confirmationCode
+            });
+        }
+    });
+
+    saveReservations();
+    updateAvailability();
+    displayReservations();
+
+    // Guardar perfil
+    if (cart.length > 0) {
+        saveUserProfile({
+            nombre: cart[0].nombre,
+            telefono: cart[0].telefono,
+            depto: cart[0].depto
+        });
+    }
+
+    // Mostrar confirmación múltiple
+    showMultipleConfirmation(codes);
+
+    // Limpiar carrito
+    cart = [];
+    updateCartDisplay();
+
+    showNotification(`¡${successCount} reservas confirmadas! 🎉`, 'success');
+}
+
+// Mostrar confirmación múltiple
+function showMultipleConfirmation(codes) {
+    const box = document.getElementById('confirmationBox');
+    const details = document.getElementById('confirmationDetails');
+    const codeElement = document.getElementById('confirmationCode');
+
+    details.innerHTML = `
+        <h4>Resumen de Reservas:</h4>
+        ${codes.map(c => `
+            <p><strong>${formatFecha(c.fecha)}</strong> - ${c.turno}</p>
+            <p style="margin-left: 20px;">Código: <strong>${c.codigo}</strong></p>
+        `).join('')}
+    `;
+    codeElement.textContent = 'Ver arriba';
+
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ===== FUNCIONES DE PERFIL =====
+
+// Cargar perfil de usuario
+function loadUserProfile() {
+    if (userProfile) {
+        document.getElementById('savedProfile').style.display = 'block';
+        document.getElementById('profileName').textContent = userProfile.nombre;
+    }
+}
+
+// Guardar perfil de usuario
+function saveUserProfile(profile) {
+    userProfile = profile;
+    localStorage.setItem('userProfile', JSON.stringify(profile));
+    loadUserProfile();
+}
+
+// Usar datos guardados
+function loadProfile() {
+    if (userProfile) {
+        document.getElementById('nombre').value = userProfile.nombre;
+        document.getElementById('depto').value = userProfile.depto;
+        document.getElementById('telefono').value = userProfile.telefono;
+        showNotification('Datos cargados', 'success');
+    }
+}
+
+// ===== BÚSQUEDA DE MIS RESERVAS =====
+
+function searchMyReservations() {
+    const query = document.getElementById('myReservationsSearch').value.trim().toLowerCase();
+    const container = document.getElementById('myReservationsList');
+
+    if (!query) {
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Ingrese su teléfono o código de confirmación para buscar sus reservas</p>';
+        return;
+    }
+
+    // Buscar en todas las reservas
+    const myReservations = [];
+    Object.keys(reservations).forEach(key => {
+        reservations[key].forEach(r => {
+            if (
+                (r.telefono && r.telefono.includes(query)) ||
+                (r.codigo && r.codigo.toLowerCase().includes(query)) ||
+                (r.nombre && r.nombre.toLowerCase().includes(query))
+            ) {
+                myReservations.push({
+                    ...r,
+                    key,
+                    turnoNombre: r.turno,
+                    fechaNombre: formatFecha(r.fecha)
+                });
+            }
+        });
+    });
+
+    if (myReservations.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No se encontraron reservas</p>';
+        return;
+    }
+
+    // Ordenar por fecha
+    myReservations.sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+    container.innerHTML = myReservations.map(r => `
+        <div class="reservation-item">
+            <div class="reservation-info">
+                <strong>${r.nombre || 'Sin nombre'}</strong> -
+                <strong>${r.fechaNombre}</strong> -
+                <strong>${r.turno}</strong><br>
+                Depto: <strong>${r.depto}</strong> -
+                Personas: <strong>${r.personas}</strong>
+                ${r.telefono ? `<br>Tel: <strong>${r.telefono}</strong>` : ''}
+                ${r.codigo ? `<br>Código: <strong>${r.codigo}</strong>` : ''}
+                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                    Reservado: ${r.fechaReserva}
+                </div>
+            </div>
+            <button class="btn-delete" onclick="deleteReservation(${r.id}, '${r.key}')">
+                Cancelar
+            </button>
+        </div>
+    `).join('');
 }
