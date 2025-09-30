@@ -1,6 +1,6 @@
 // Configuración
 const MAX_MESAS_POR_TURNO = 15;
-const ADMIN_PASSWORD = 'aviva2025'; // Cambiar esta contraseña
+const ADMIN_PASSWORD = 'avivia2025'; // Cambiar esta contraseña
 
 // Estado de la aplicación
 let reservations = JSON.parse(localStorage.getItem('sucotReservations')) || {
@@ -470,7 +470,7 @@ function exportReservations() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `reservas-succot-aviva-2025-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `reservas-succot-avivia-2025-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -533,7 +533,7 @@ function exportReservationsFiltered() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `reservas-filtradas-succot-aviva-2025-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `reservas-filtradas-succot-avivia-2025-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 
