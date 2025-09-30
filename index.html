@@ -102,6 +102,47 @@
         </header>
 
         <main>
+            <!-- Instrucciones -->
+            <div class="instructions-container">
+                <h2>📋 Cómo Hacer tu Reserva</h2>
+                <div class="instructions-grid">
+                    <div class="instruction-card">
+                        <div class="instruction-number">1</div>
+                        <h3>Selecciona Día y Horario</h3>
+                        <p>Elige el día de Succot (6-13 Oct) y el horario que prefieras:</p>
+                        <ul>
+                            <li><strong>☀️ Mediodía:</strong> 12-2pm o 2-4pm</li>
+                            <li><strong>🌙 Noche:</strong> 8-9:15pm o 9:15-10:30pm</li>
+                        </ul>
+                    </div>
+                    <div class="instruction-card">
+                        <div class="instruction-number">2</div>
+                        <h3>Completa tus Datos</h3>
+                        <p>Ingresa tu información personal:</p>
+                        <ul>
+                            <li>Nombre completo</li>
+                            <li>Número de departamento</li>
+                            <li>Teléfono</li>
+                            <li>Cantidad de personas</li>
+                        </ul>
+                    </div>
+                    <div class="instruction-card">
+                        <div class="instruction-number">3</div>
+                        <h3>Agrega a tu Selección</h3>
+                        <p>Haz clic en <strong>"➕ Agregar Reserva"</strong> para añadir esta reserva a tu lista.</p>
+                        <p>Puedes agregar múltiples horarios/días antes de confirmar.</p>
+                    </div>
+                    <div class="instruction-card">
+                        <div class="instruction-number">4</div>
+                        <h3>Confirma tus Reservas</h3>
+                        <p>Cuando hayas agregado todas las reservas que necesitas, haz clic en <strong>"✅ Confirmar Reservas"</strong>.</p>
+                        <p>Recibirás códigos de confirmación para cada una.</p>
+                    </div>
+                </div>
+                <div class="instructions-note">
+                    <strong>💡 Importante:</strong> Límite de 15 mesas por horario. Puedes buscar tus reservas con tu teléfono o código de confirmación en la sección "Mis Reservas".
+                </div>
+            </div>
             <div class="booking-form-container">
                 <h2>Nueva Reserva</h2>
                 <form id="bookingForm">
@@ -162,7 +203,6 @@
 
                     <div class="form-actions">
                         <button type="button" class="btn-add-selection" onclick="addToSelection()">➕ Agregar Reserva</button>
-                        <button type="submit" class="btn-submit">Reservar Directamente</button>
                     </div>
                 </form>
 

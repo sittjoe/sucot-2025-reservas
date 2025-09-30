@@ -44,6 +44,102 @@ main {
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
 
+/* Instructions Section */
+.instructions-container {
+    margin-bottom: 50px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f0f4ff 0%, #f8f0ff 100%);
+    border-radius: 15px;
+    border: 2px solid #667eea;
+}
+
+.instructions-container h2 {
+    color: #667eea;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    text-align: center;
+}
+
+.instructions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.instruction-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.instruction-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.15);
+}
+
+.instruction-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.instruction-card h3 {
+    color: #333;
+    font-size: 1.2em;
+    margin-bottom: 12px;
+}
+
+.instruction-card p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.instruction-card ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.instruction-card ul li {
+    padding: 5px 0;
+    color: #555;
+    position: relative;
+    padding-left: 20px;
+}
+
+.instruction-card ul li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+}
+
+.instructions-note {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+    color: #333;
+    line-height: 1.6;
+}
+
+.instructions-note strong {
+    color: #667eea;
+}
+
 .booking-form-container {
     margin-bottom: 50px;
     padding: 30px;
@@ -534,9 +630,8 @@ footer {
 
 /* Form Actions */
 .form-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    display: flex;
+    justify-content: center;
 }
 
 .btn-add-cart {
@@ -781,8 +876,12 @@ footer {
         gap: 15px;
     }
 
-    .form-actions {
+    .instructions-grid {
         grid-template-columns: 1fr;
+    }
+
+    .instructions-container {
+        padding: 20px;
     }
 
     .cart-actions {
@@ -1033,6 +1132,7 @@ footer {
 
 /* ===== BOTONES MEJORADOS ===== */
 .btn-add-selection {
+    width: 100%;
     padding: 15px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;

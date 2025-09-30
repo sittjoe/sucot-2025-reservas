@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     generateAvailabilityCalendar();
     loadUserProfile();
 
-    document.getElementById('bookingForm').addEventListener('submit', handleBooking);
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
     document.getElementById('fecha').addEventListener('change', updateAvailabilityIndicator);
 });
