@@ -17,7 +17,10 @@ body {
 }
 
 header {
-    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     color: white;
     margin-bottom: 40px;
     padding: 20px;
@@ -68,10 +71,10 @@ main {
 .form-group input,
 .form-group select {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     border: 2px solid #ddd;
     border-radius: 8px;
-    font-size: 1em;
+    font-size: 16px;
     transition: border-color 0.3s;
 }
 
@@ -262,22 +265,23 @@ footer {
 
 /* Admin Styles */
 .btn-admin {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+    margin-top: 15px;
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: 2px solid white;
-    padding: 10px 20px;
+    padding: 12px 30px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
+    font-size: 1em;
     transition: all 0.3s;
 }
 
 .btn-admin:hover {
     background: white;
     color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 }
 
 .dates-info {
@@ -712,19 +716,27 @@ footer {
 }
 
 @media (max-width: 768px) {
-    header {
-        position: relative;
+    body {
+        padding: 10px;
     }
 
     header h1 {
         font-size: 2em;
     }
 
+    .subtitle {
+        font-size: 1em;
+    }
+
+    .dates-info {
+        font-size: 1em;
+    }
+
     .btn-admin {
-        position: relative;
-        top: 0;
-        right: 0;
-        margin-top: 15px;
+        width: 100%;
+        max-width: 300px;
+        padding: 15px 30px;
+        font-size: 1.1em;
     }
 
     main {
@@ -733,6 +745,23 @@ footer {
 
     .booking-form-container {
         padding: 20px;
+    }
+
+    .booking-form-container h2 {
+        font-size: 1.5em;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 16px;
+        font-size: 16px;
+    }
+
+    .btn-submit,
+    .btn-add-selection {
+        padding: 18px;
+        font-size: 1.1em;
+        min-height: 50px;
     }
 
     .turnos-grid {
