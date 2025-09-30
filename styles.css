@@ -1224,17 +1224,67 @@ footer {
     color: #333;
 }
 
+/* ===== BOTÓN TOGGLE CALENDARIO ===== */
+.availability-header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn-toggle-calendar {
+    padding: 15px 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    flex: 1;
+    min-width: 250px;
+}
+
+.btn-toggle-calendar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-toggle-calendar:active {
+    transform: translateY(0);
+}
+
 /* ===== RESPONSIVE MEJORADO ===== */
 @media (max-width: 768px) {
     .calendar-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .panel-actions {
         flex-direction: column;
     }
-    
+
     .date-section {
         padding: 15px;
+    }
+
+    .availability-header-mobile {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .availability-header-mobile h2 {
+        text-align: center;
+    }
+
+    .btn-toggle-calendar {
+        width: 100%;
+        min-width: auto;
+        font-size: 1em;
+        padding: 18px 20px;
     }
 }

@@ -1052,14 +1052,14 @@ function toggleCalendar() {
     const calendar = document.getElementById('availabilityCalendar');
     const button = document.getElementById('btnToggleCalendar');
     const text = document.getElementById('calendarToggleText');
-    
+
     if (calendar.style.display === 'none') {
         calendar.style.display = 'block';
-        text.textContent = 'Ocultar';
+        text.textContent = '👆 Haz clic aquí para ocultar los horarios';
         button.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
         calendar.style.display = 'none';
-        text.textContent = 'Ver Todo';
+        text.textContent = '👉 Haz clic aquí para ver todos los horarios disponibles';
     }
 }
 
