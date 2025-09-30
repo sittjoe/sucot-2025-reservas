@@ -11,20 +11,27 @@ let reservations = JSON.parse(localStorage.getItem('sucotReservations')) || {
 
 let isAdminLoggedIn = false;
 
-// Carrito de reservas
-let cart = [];
+// Sistema de selección múltiple (reemplaza "carrito")
+let selectedReservations = [];
 
 // Perfil de usuario
 let userProfile = JSON.parse(localStorage.getItem('userProfile')) || null;
 
+// Horarios disponibles
+const HORARIOS = {
+    'manana': ['08:00-09:15', '09:15-10:30'],
+    'mediodia': ['12:00-14:00', '14:00-16:00'],
+    'noche': ['20:00-21:15', '21:15-22:30']
+};
+
 // Inicializar la aplicación
 document.addEventListener('DOMContentLoaded', () => {
-    updateAvailability();
-    displayReservations();
+    generateAvailabilityCalendar();
     loadUserProfile();
 
     document.getElementById('bookingForm').addEventListener('submit', handleBooking);
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    document.getElementById('fecha').addEventListener('change', updateAvailabilityIndicator);
 });
 
 // Manejar nueva reserva
@@ -602,10 +609,100 @@ function resetReservations() {
     }
 }
 
-// ===== FUNCIONES DEL CARRITO =====
+// ===== GENERAR CALENDARIO DE DISPONIBILIDAD =====
 
-// Agregar al carrito
-function addToCart() {
+function generateAvailabilityCalendar() {
+    const calendar = document.getElementById('availabilityCalendar');
+    const fechas = [
+        '2025-10-06', '2025-10-07', '2025-10-08', '2025-10-09',
+        '2025-10-10', '2025-10-11', '2025-10-12', '2025-10-13'
+    ];
+
+    const todosLosHorarios = [
+        { value: '08:00-09:15', label: '8:00-9:15 AM', periodo: 'manana' },
+        { value: '09:15-10:30', label: '9:15-10:30 AM', periodo: 'manana' },
+        { value: '12:00-14:00', label: '12:00-2:00 PM', periodo: 'mediodia' },
+        { value: '14:00-16:00', label: '2:00-4:00 PM', periodo: 'mediodia' },
+        { value: '20:00-21:15', label: '8:00-9:15 PM', periodo: 'noche' },
+        { value: '21:15-22:30', label: '9:15-10:30 PM', periodo: 'noche' }
+    ];
+
+    let html = '<div class="calendar-grid">';
+
+    fechas.forEach(fecha => {
+        html += `<div class="date-section">`;
+        html += `<h4 class="date-header">${formatFecha(fecha)}</h4>`;
+        html += `<div class="time-slots">`;
+
+        todosLosHorarios.forEach(horario => {
+            const key = `${fecha}-${horario.value}`;
+            const ocupadas = reservations[key] ? reservations[key].length : 0;
+            const disponibles = MAX_MESAS_POR_TURNO - ocupadas;
+            const porcentaje = (ocupadas / MAX_MESAS_POR_TURNO) * 100;
+
+            let statusClass = 'available';
+            let statusText = `${disponibles} disponibles`;
+
+            if (disponibles === 0) {
+                statusClass = 'full';
+                statusText = 'Completo';
+            } else if (disponibles <= 3) {
+                statusClass = 'almost-full';
+                statusText = `Solo ${disponibles}`;
+            }
+
+            html += `
+                <div class="time-slot ${statusClass}" data-fecha="${fecha}" data-horario="${horario.value}">
+                    <div class="time-slot-header">
+                        <span class="time-label">${horario.label}</span>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="availability-bar">
+                        <div class="availability-fill" style="width: ${porcentaje}%"></div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div></div>`;
+    });
+
+    html += '</div>';
+    calendar.innerHTML = html;
+}
+
+// Actualizar indicador de disponibilidad en tiempo real
+function updateAvailabilityIndicator() {
+    const fecha = document.getElementById('fecha').value;
+    const turno = document.getElementById('turno').value;
+    const indicator = document.getElementById('availabilityIndicator');
+
+    if (!fecha || !turno) {
+        indicator.innerHTML = '';
+        return;
+    }
+
+    const key = `${fecha}-${turno}`;
+    const ocupadas = reservations[key] ? reservations[key].length : 0;
+    const disponibles = MAX_MESAS_POR_TURNO - ocupadas;
+
+    let statusHtml = '';
+
+    if (disponibles === 0) {
+        statusHtml = `<span class="status-error">❌ Sin mesas disponibles</span>`;
+    } else if (disponibles <= 3) {
+        statusHtml = `<span class="status-warning">⚠️ Solo quedan ${disponibles} mesas</span>`;
+    } else {
+        statusHtml = `<span class="status-success">✅ ${disponibles} mesas disponibles</span>`;
+    }
+
+    indicator.innerHTML = statusHtml;
+}
+
+// ===== SISTEMA DE SELECCIÓN MÚLTIPLE =====
+
+// Agregar a selección
+function addToSelection() {
     const fecha = document.getElementById('fecha').value;
     const turno = document.getElementById('turno').value;
     const nombre = document.getElementById('nombre').value.trim();
@@ -631,14 +728,14 @@ function addToCart() {
     }
 
     // Verificar si ya existe en el carrito
-    const exists = cart.some(item => item.fecha === fecha && item.turno === turno);
+    const exists = selectedReservations.some(item => item.fecha === fecha && item.turno === turno);
     if (exists) {
-        showNotification('Esta reserva ya está en el carrito', 'warning');
+        showNotification('Esta reserva ya fue seleccionada', 'warning');
         return;
     }
 
     // Agregar al carrito
-    cart.push({
+    selectedReservations.push({
         fecha,
         turno,
         nombre,
@@ -647,67 +744,69 @@ function addToCart() {
         personas
     });
 
-    updateCartDisplay();
-    showNotification('✅ Agregado al carrito', 'success');
+    updateSelectionDisplay();
+    showNotification('✅ Agregado a tu selección', 'success');
 
     // Limpiar solo fecha y turno
     document.getElementById('fecha').value = '';
     document.getElementById('turno').value = '';
 }
 
-// Actualizar visualización del carrito
-function updateCartDisplay() {
-    const cartSection = document.getElementById('cartSection');
-    const cartItems = document.getElementById('cartItems');
-    const cartCount = document.getElementById('cartCount');
+// Actualizar visualización de selección
+function updateSelectionDisplay() {
+    const panel = document.getElementById('multipleReservationsPanel');
+    const listContainer = document.getElementById('selectedReservations');
+    const countBadge = document.getElementById('selectionCount');
+    const confirmCount = document.getElementById('confirmCount');
 
-    if (cart.length === 0) {
-        cartSection.style.display = 'none';
+    if (selectedReservations.length === 0) {
+        panel.style.display = 'none';
         return;
     }
 
-    cartSection.style.display = 'block';
-    cartCount.textContent = cart.length;
+    panel.style.display = 'block';
+    countBadge.textContent = selectedReservations.length;
+    confirmCount.textContent = selectedReservations.length;
 
-    cartItems.innerHTML = cart.map((item, index) => `
+    listContainer.innerHTML = selectedReservations.map((item, index) => `
         <div class="cart-item">
             <div class="cart-item-info">
                 <strong>${formatFecha(item.fecha)}</strong> - ${item.turno}
                 <br>
                 <small>${item.personas} personas</small>
             </div>
-            <button class="btn-remove-cart" onclick="removeFromCart(${index})">❌</button>
+            <button class="btn-remove-cart" onclick="removeFromSelection(${index})">❌</button>
         </div>
     `).join('');
 }
 
 // Remover del carrito
-function removeFromCart(index) {
-    cart.splice(index, 1);
-    updateCartDisplay();
-    showNotification('Removido del carrito', 'success');
+function removeFromSelection(index) {
+    selectedReservations.splice(index, 1);
+    updateSelectionDisplay();
+    showNotification('Removido de la selección', 'success');
 }
 
-// Limpiar carrito
-function clearCart() {
+// Limpiar selección
+function clearSelection() {
     if (confirm('¿Desea limpiar todo el carrito?')) {
-        cart = [];
-        updateCartDisplay();
-        showNotification('Carrito limpiado', 'success');
+        selectedReservations = [];
+        updateSelectionDisplay();
+        showNotification('Selección limpiada', 'success');
     }
 }
 
 // Confirmar todas las reservas del carrito
-function confirmAllReservations() {
-    if (cart.length === 0) {
-        showNotification('El carrito está vacío', 'warning');
+function confirmMultipleReservations() {
+    if (selectedReservations.length === 0) {
+        showNotification('No hay reservas seleccionadas', 'warning');
         return;
     }
 
     let successCount = 0;
     let codes = [];
 
-    cart.forEach(item => {
+    selectedReservations.forEach(item => {
         const key = `${item.fecha}-${item.turno}`;
 
         if (!reservations[key]) {
@@ -745,20 +844,20 @@ function confirmAllReservations() {
     displayReservations();
 
     // Guardar perfil
-    if (cart.length > 0) {
+    if (selectedReservations.length > 0) {
         saveUserProfile({
-            nombre: cart[0].nombre,
-            telefono: cart[0].telefono,
-            depto: cart[0].depto
+            nombre: selectedReservations[0].nombre,
+            telefono: selectedReservations[0].telefono,
+            depto: selectedReservations[0].depto
         });
     }
 
     // Mostrar confirmación múltiple
     showMultipleConfirmation(codes);
 
-    // Limpiar carrito
-    cart = [];
-    updateCartDisplay();
+    // Limpiar selección
+    selectedReservations = [];
+    updateSelectionDisplay();
 
     showNotification(`¡${successCount} reservas confirmadas! 🎉`, 'success');
 }

@@ -74,13 +74,13 @@
                             <option value="08:00-09:15">8:00 - 9:15 AM</option>
                             <option value="09:15-10:30">9:15 - 10:30 AM</option>
                         </optgroup>
-                        <optgroup label="Día">
+                        <optgroup label="Mediodía">
                             <option value="12:00-14:00">12:00 - 2:00 PM</option>
                             <option value="14:00-16:00">2:00 - 4:00 PM</option>
                         </optgroup>
                         <optgroup label="Noche">
-                            <option value="18:00-19:30">6:00 - 7:30 PM</option>
-                            <option value="19:30-21:00">7:30 - 9:00 PM</option>
+                            <option value="20:00-21:15">8:00 - 9:15 PM</option>
+                            <option value="21:15-22:30">9:15 - 10:30 PM</option>
                         </optgroup>
                     </select>
                 </div>
@@ -129,22 +129,23 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="turno">Horario:</label>
-                        <select id="turno" required>
+                        <label for="turno">Horario de Reserva:</label>
+                        <select id="turno" required onchange="updateAvailabilityIndicator()">
                             <option value="">Seleccione un horario</option>
                             <optgroup label="🌅 Mañana">
                                 <option value="08:00-09:15">8:00 AM - 9:15 AM</option>
                                 <option value="09:15-10:30">9:15 AM - 10:30 AM</option>
                             </optgroup>
-                            <optgroup label="☀️ Día">
+                            <optgroup label="☀️ Mediodía">
                                 <option value="12:00-14:00">12:00 PM - 2:00 PM</option>
                                 <option value="14:00-16:00">2:00 PM - 4:00 PM</option>
                             </optgroup>
                             <optgroup label="🌙 Noche">
-                                <option value="18:00-19:30">6:00 PM - 7:30 PM</option>
-                                <option value="19:30-21:00">7:30 PM - 9:00 PM</option>
+                                <option value="20:00-21:15">8:00 PM - 9:15 PM</option>
+                                <option value="21:15-22:30">9:15 PM - 10:30 PM</option>
                             </optgroup>
                         </select>
+                        <div id="availabilityIndicator" class="availability-indicator"></div>
                     </div>
 
                     <div class="form-group">
@@ -167,23 +168,26 @@
                         <input type="number" id="personas" min="1" max="20" placeholder="Ej: 4" required>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="button" class="btn-add-cart" onclick="addToCart()">🛒 Agregar al Carrito</button>
-                        <button type="submit" class="btn-submit">Reservar Ahora</button>
+                    <div class="saved-profile" id="savedProfile" style="display: none;">
+                        <p>✅ Perfil guardado: <strong id="profileName"></strong> - <button type="button" class="btn-link" onclick="loadProfile()">Cargar datos</button></p>
                     </div>
 
-                    <div class="saved-profile" id="savedProfile" style="display: none;">
-                        <p>✅ Datos guardados: <strong id="profileName"></strong> - <button type="button" class="btn-link" onclick="loadProfile()">Usar datos guardados</button></p>
+                    <div class="form-actions">
+                        <button type="button" class="btn-add-selection" onclick="addToSelection()">➕ Agregar Reserva</button>
+                        <button type="submit" class="btn-submit">Reservar Directamente</button>
                     </div>
                 </form>
 
-                <!-- Carrito de Reservas -->
-                <div id="cartSection" class="cart-section" style="display: none;">
-                    <h3>🛒 Carrito de Reservas (<span id="cartCount">0</span>)</h3>
-                    <div id="cartItems" class="cart-items"></div>
-                    <div class="cart-actions">
-                        <button class="btn-confirm-all" onclick="confirmAllReservations()">✅ Confirmar Todas las Reservas</button>
-                        <button class="btn-clear-cart" onclick="clearCart()">🗑️ Limpiar Carrito</button>
+                <!-- Panel de Reservas Múltiples -->
+                <div id="multipleReservationsPanel" class="multiple-reservations-panel" style="display: none;">
+                    <div class="panel-header">
+                        <h3>📋 Reservas Seleccionadas</h3>
+                        <span class="selection-badge" id="selectionCount">0</span>
+                    </div>
+                    <div id="selectedReservations" class="selected-reservations-list"></div>
+                    <div class="panel-actions">
+                        <button class="btn-confirm-multiple" onclick="confirmMultipleReservations()">✅ Confirmar <span id="confirmCount">0</span> Reservas</button>
+                        <button class="btn-clear-selection" onclick="clearSelection()">✖️ Limpiar Todo</button>
                     </div>
                 </div>
 
@@ -198,44 +202,8 @@
             </div>
 
             <div class="availability-container">
-                <h2>Disponibilidad de Turnos</h2>
-                <div class="turnos-grid">
-                    <div class="turno-card">
-                        <h3>🌅 Mañana</h3>
-                        <p class="horario">09:00 - 12:00</p>
-                        <p class="disponibilidad">
-                            <span class="mesas-disponibles" id="manana-disponibles">15</span>
-                            <span class="mesas-total">/ 15 mesas</span>
-                        </p>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="manana-progress"></div>
-                        </div>
-                    </div>
-
-                    <div class="turno-card">
-                        <h3>☀️ Tarde</h3>
-                        <p class="horario">16:00 - 19:00</p>
-                        <p class="disponibilidad">
-                            <span class="mesas-disponibles" id="tarde-disponibles">15</span>
-                            <span class="mesas-total">/ 15 mesas</span>
-                        </p>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="tarde-progress"></div>
-                        </div>
-                    </div>
-
-                    <div class="turno-card">
-                        <h3>🌙 Noche</h3>
-                        <p class="horario">20:00 - 23:00</p>
-                        <p class="disponibilidad">
-                            <span class="mesas-disponibles" id="noche-disponibles">15</span>
-                            <span class="mesas-total">/ 15 mesas</span>
-                        </p>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="noche-progress"></div>
-                        </div>
-                    </div>
-                </div>
+                <h2>📊 Disponibilidad por Horario</h2>
+                <div id="availabilityCalendar" class="availability-calendar"></div>
             </div>
 
             <div class="my-reservations-container">
@@ -247,10 +215,6 @@
                 <div id="myReservationsList" class="reservations-list"></div>
             </div>
 
-            <div class="reservations-container">
-                <h2>Reservas Recientes</h2>
-                <div id="reservationsList" class="reservations-list"></div>
-            </div>
         </main>
 
         <footer>
