@@ -78,10 +78,41 @@ function handleBooking(e) {
     updateAvailability();
     displayReservations();
 
+    // Generar código de confirmación
+    const confirmationCode = `AV${reservation.id.toString().slice(-6)}`;
+
+    // Mostrar confirmación detallada
+    showConfirmationBox(reservation, confirmationCode, key);
+
     // Limpiar formulario
     document.getElementById('bookingForm').reset();
 
     showNotification('¡Reserva realizada con éxito! 🎉', 'success');
+}
+
+// Mostrar caja de confirmación
+function showConfirmationBox(reservation, code, key) {
+    const box = document.getElementById('confirmationBox');
+    const details = document.getElementById('confirmationDetails');
+    const codeElement = document.getElementById('confirmationCode');
+
+    details.innerHTML = `
+        <p><strong>Nombre:</strong> ${reservation.nombre}</p>
+        <p><strong>Fecha:</strong> ${formatFecha(reservation.fecha)}</p>
+        <p><strong>Turno:</strong> ${getTurnoEmoji(reservation.turno)} ${getTurnoNombre(reservation.turno)}</p>
+        <p><strong>Departamento:</strong> ${reservation.depto}</p>
+        <p><strong>Personas:</strong> ${reservation.personas}</p>
+        <p><strong>Teléfono:</strong> ${reservation.telefono}</p>
+    `;
+    codeElement.textContent = code;
+
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Cerrar confirmación
+function closeConfirmation() {
+    document.getElementById('confirmationBox').style.display = 'none';
 }
 
 // Eliminar reserva
@@ -224,14 +255,14 @@ function getTurnoNombre(turno) {
 // Formatear fecha
 function formatFecha(fecha) {
     const fechas = {
-        '2025-10-13': 'Lun 13 Oct',
-        '2025-10-14': 'Mar 14 Oct',
-        '2025-10-15': 'Mié 15 Oct',
-        '2025-10-16': 'Jue 16 Oct',
-        '2025-10-17': 'Vie 17 Oct',
-        '2025-10-18': 'Sáb 18 Oct',
-        '2025-10-19': 'Dom 19 Oct',
-        '2025-10-20': 'Lun 20 Oct'
+        '2025-10-06': 'Lun 6 Oct',
+        '2025-10-07': 'Mar 7 Oct',
+        '2025-10-08': 'Mié 8 Oct',
+        '2025-10-09': 'Jue 9 Oct',
+        '2025-10-10': 'Vie 10 Oct',
+        '2025-10-11': 'Sáb 11 Oct',
+        '2025-10-12': 'Dom 12 Oct',
+        '2025-10-13': 'Lun 13 Oct'
     };
     return fechas[fecha] || fecha;
 }

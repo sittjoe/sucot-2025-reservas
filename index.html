@@ -56,14 +56,14 @@
                     <label for="filterFecha">Filtrar por Fecha:</label>
                     <select id="filterFecha" onchange="filterReservations()">
                         <option value="">Todas las fechas</option>
+                        <option value="2025-10-06">Lunes 6 Oct</option>
+                        <option value="2025-10-07">Martes 7 Oct</option>
+                        <option value="2025-10-08">Miércoles 8 Oct</option>
+                        <option value="2025-10-09">Jueves 9 Oct</option>
+                        <option value="2025-10-10">Viernes 10 Oct</option>
+                        <option value="2025-10-11">Sábado 11 Oct</option>
+                        <option value="2025-10-12">Domingo 12 Oct</option>
                         <option value="2025-10-13">Lunes 13 Oct</option>
-                        <option value="2025-10-14">Martes 14 Oct</option>
-                        <option value="2025-10-15">Miércoles 15 Oct</option>
-                        <option value="2025-10-16">Jueves 16 Oct</option>
-                        <option value="2025-10-17">Viernes 17 Oct</option>
-                        <option value="2025-10-18">Sábado 18 Oct</option>
-                        <option value="2025-10-19">Domingo 19 Oct</option>
-                        <option value="2025-10-20">Lunes 20 Oct</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -96,7 +96,7 @@
         <header>
             <h1>🕎 Succot Avivia 2025</h1>
             <p class="subtitle">Sistema de Reservación de Mesas</p>
-            <p class="dates-info">📅 Del 13 al 20 de Octubre, 2025</p>
+            <p class="dates-info">📅 Del 6 al 13 de Octubre, 2025</p>
             <button class="btn-admin" onclick="openLoginModal()">🔐 Admin</button>
         </header>
 
@@ -108,14 +108,14 @@
                         <label for="fecha">Día de Succot:</label>
                         <select id="fecha" required>
                             <option value="">Seleccione un día</option>
-                            <option value="2025-10-13">Lunes 13 Oct - Día 1</option>
-                            <option value="2025-10-14">Martes 14 Oct - Día 2</option>
-                            <option value="2025-10-15">Miércoles 15 Oct - Día 3</option>
-                            <option value="2025-10-16">Jueves 16 Oct - Día 4</option>
-                            <option value="2025-10-17">Viernes 17 Oct - Día 5</option>
-                            <option value="2025-10-18">Sábado 18 Oct - Día 6</option>
-                            <option value="2025-10-19">Domingo 19 Oct - Día 7</option>
-                            <option value="2025-10-20">Lunes 20 Oct - Shemini Atzeret</option>
+                            <option value="2025-10-06">Lunes 6 Oct - Día 1 (Yom Tov)</option>
+                            <option value="2025-10-07">Martes 7 Oct - Día 2 (Yom Tov)</option>
+                            <option value="2025-10-08">Miércoles 8 Oct - Día 3 (Chol HaMoed)</option>
+                            <option value="2025-10-09">Jueves 9 Oct - Día 4 (Chol HaMoed)</option>
+                            <option value="2025-10-10">Viernes 10 Oct - Día 5 (Chol HaMoed)</option>
+                            <option value="2025-10-11">Sábado 11 Oct - Día 6 (Shabbat)</option>
+                            <option value="2025-10-12">Domingo 12 Oct - Día 7 (Hoshana Rabá)</option>
+                            <option value="2025-10-13">Lunes 13 Oct - Shemini Atzeret</option>
                         </select>
                     </div>
 
@@ -151,6 +151,15 @@
 
                     <button type="submit" class="btn-submit">Reservar Mesa</button>
                 </form>
+
+                <div id="confirmationBox" class="confirmation-box" style="display: none;">
+                    <div class="confirmation-content">
+                        <h3>✅ ¡Reserva Confirmada!</h3>
+                        <div class="confirmation-details" id="confirmationDetails"></div>
+                        <p class="confirmation-code">Código de Confirmación: <strong id="confirmationCode"></strong></p>
+                        <button class="btn-submit" onclick="closeConfirmation()">Cerrar</button>
+                    </div>
+                </div>
             </div>
 
             <div class="availability-container">
