@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Succot Aviiva 2025 - Reservas</title>
+    <title>Succot Aviva 2025 - Reservas</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -25,7 +25,7 @@
     <!-- Admin Panel -->
     <div id="adminPanel" class="admin-panel" style="display: none;">
         <div class="admin-header">
-            <h2>📊 Panel de Administración - Succot Aviiva 2025</h2>
+            <h2>📊 Panel de Administración - Succot Aviva 2025</h2>
             <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
         </div>
         <div class="admin-content">
@@ -51,12 +51,42 @@
                     <p id="adminNoche" class="stat-number">0/15</p>
                 </div>
             </div>
+            <div class="admin-filters">
+                <div class="form-group">
+                    <label for="filterFecha">Filtrar por Fecha:</label>
+                    <select id="filterFecha" onchange="filterReservations()">
+                        <option value="">Todas las fechas</option>
+                        <option value="2025-10-13">Lunes 13 Oct</option>
+                        <option value="2025-10-14">Martes 14 Oct</option>
+                        <option value="2025-10-15">Miércoles 15 Oct</option>
+                        <option value="2025-10-16">Jueves 16 Oct</option>
+                        <option value="2025-10-17">Viernes 17 Oct</option>
+                        <option value="2025-10-18">Sábado 18 Oct</option>
+                        <option value="2025-10-19">Domingo 19 Oct</option>
+                        <option value="2025-10-20">Lunes 20 Oct</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterTurno">Filtrar por Turno:</label>
+                    <select id="filterTurno" onchange="filterReservations()">
+                        <option value="">Todos los turnos</option>
+                        <option value="manana">Mañana</option>
+                        <option value="tarde">Tarde</option>
+                        <option value="noche">Noche</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="searchQuery">Buscar:</label>
+                    <input type="text" id="searchQuery" placeholder="Buscar por nombre, depto..." oninput="filterReservations()">
+                </div>
+            </div>
             <div class="admin-actions">
                 <button class="btn-export" onclick="exportReservations()">📥 Exportar CSV</button>
+                <button class="btn-export" onclick="exportReservationsFiltered()">📥 Exportar Filtrados</button>
                 <button class="btn-danger" onclick="resetReservations()">🗑️ Limpiar Todo</button>
             </div>
             <div class="admin-table">
-                <h3>Todas las Reservas</h3>
+                <h3>Todas las Reservas (<span id="reservationCount">0</span>)</h3>
                 <div id="adminReservationsList"></div>
             </div>
         </div>
@@ -64,7 +94,7 @@
 
     <div class="container" id="mainContainer">
         <header>
-            <h1>🕎 Succot Aviiva 2025</h1>
+            <h1>🕎 Succot Aviva 2025</h1>
             <p class="subtitle">Sistema de Reservación de Mesas</p>
             <p class="dates-info">📅 Del 13 al 20 de Octubre, 2025</p>
             <button class="btn-admin" onclick="openLoginModal()">🔐 Admin</button>
@@ -100,8 +130,18 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="nombre">Nombre Completo:</label>
+                        <input type="text" id="nombre" placeholder="Ej: Abraham Cohen" required minlength="3">
+                    </div>
+
+                    <div class="form-group">
                         <label for="depto">Número de Departamento:</label>
                         <input type="text" id="depto" placeholder="Ej: 101, A-5, etc." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono:</label>
+                        <input type="tel" id="telefono" placeholder="Ej: 555-1234" required pattern="[0-9\-\+\(\)\s]+">
                     </div>
 
                     <div class="form-group">
@@ -161,7 +201,7 @@
         </main>
 
         <footer>
-            <p>Succot Aviiva 2025 - Chag Sameach! 🎉</p>
+            <p>Succot Aviva 2025 - Chag Sameach! 🎉</p>
         </footer>
     </div>
 
