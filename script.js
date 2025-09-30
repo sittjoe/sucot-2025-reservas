@@ -19,7 +19,6 @@ let userProfile = JSON.parse(localStorage.getItem('userProfile')) || null;
 
 // Horarios disponibles
 const HORARIOS = {
-    'manana': ['08:00-09:15', '09:15-10:30'],
     'mediodia': ['12:00-14:00', '14:00-16:00'],
     'noche': ['20:00-21:15', '21:15-22:30']
 };
@@ -360,25 +359,25 @@ function logout() {
 function updateAdminStats() {
     let totalReservas = 0;
     let totalPersonas = 0;
-    let countManana = 0;
     let countTarde = 0;
     let countNoche = 0;
 
     Object.keys(reservations).forEach(key => {
-        const turno = key.split('-').pop();
         totalReservas += reservations[key].length;
 
         reservations[key].forEach(r => {
             totalPersonas += r.personas;
-            if (turno === 'manana') countManana++;
-            else if (turno === 'tarde') countTarde++;
-            else if (turno === 'noche') countNoche++;
+            // Identificar turno por el horario específico
+            if (r.turno.startsWith('12:00') || r.turno.startsWith('14:00')) {
+                countTarde++;
+            } else if (r.turno.startsWith('20:00') || r.turno.startsWith('21:15')) {
+                countNoche++;
+            }
         });
     });
 
     document.getElementById('adminTotalReservas').textContent = totalReservas;
     document.getElementById('adminTotalPersonas').textContent = totalPersonas;
-    document.getElementById('adminManana').textContent = countManana;
     document.getElementById('adminTarde').textContent = countTarde;
     document.getElementById('adminNoche').textContent = countNoche;
 }
@@ -619,8 +618,6 @@ function generateAvailabilityCalendar() {
     ];
 
     const todosLosHorarios = [
-        { value: '08:00-09:15', label: '8:00-9:15 AM', periodo: 'manana' },
-        { value: '09:15-10:30', label: '9:15-10:30 AM', periodo: 'manana' },
         { value: '12:00-14:00', label: '12:00-2:00 PM', periodo: 'mediodia' },
         { value: '14:00-16:00', label: '2:00-4:00 PM', periodo: 'mediodia' },
         { value: '20:00-21:15', label: '8:00-9:15 PM', periodo: 'noche' },
@@ -965,4 +962,29 @@ function searchMyReservations() {
             </button>
         </div>
     `).join('');
+}
+// Toggle calendario en móvil
+function toggleCalendar() {
+    const calendar = document.getElementById('availabilityCalendar');
+    const button = document.getElementById('btnToggleCalendar');
+    const text = document.getElementById('calendarToggleText');
+    
+    if (calendar.style.display === 'none') {
+        calendar.style.display = 'block';
+        text.textContent = 'Ocultar';
+        button.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        calendar.style.display = 'none';
+        text.textContent = 'Ver Todo';
+    }
+}
+
+// Auto-colapsar calendario en móviles al cargar
+if (window.innerWidth <= 768) {
+    window.addEventListener('load', () => {
+        const calendar = document.getElementById('availabilityCalendar');
+        if (calendar) {
+            calendar.style.display = 'none';
+        }
+    });
 }
