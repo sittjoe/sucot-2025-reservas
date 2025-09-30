@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas Sucot 2025</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🕋 Reservas Sucot 2025</h1>
+            <p class="subtitle">Sistema de Reservación de Mesas</p>
+        </header>
+
+        <main>
+            <div class="booking-form-container">
+                <h2>Nueva Reserva</h2>
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="turno">Turno:</label>
+                        <select id="turno" required>
+                            <option value="">Seleccione un turno</option>
+                            <option value="tarde">Tarde (16:00 - 19:00)</option>
+                            <option value="manana">Mañana (09:00 - 12:00)</option>
+                            <option value="noche">Noche (20:00 - 23:00)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="depto">Número de Departamento:</label>
+                        <input type="text" id="depto" placeholder="Ej: 101, A-5, etc." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="personas">Número de Personas:</label>
+                        <input type="number" id="personas" min="1" max="20" placeholder="Ej: 4" required>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Reservar Mesa</button>
+                </form>
+            </div>
+
+            <div class="availability-container">
+                <h2>Disponibilidad de Turnos</h2>
+                <div class="turnos-grid">
+                    <div class="turno-card">
+                        <h3>🌅 Mañana</h3>
+                        <p class="horario">09:00 - 12:00</p>
+                        <p class="disponibilidad">
+                            <span class="mesas-disponibles" id="manana-disponibles">15</span>
+                            <span class="mesas-total">/ 15 mesas</span>
+                        </p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="manana-progress"></div>
+                        </div>
+                    </div>
+
+                    <div class="turno-card">
+                        <h3>☀️ Tarde</h3>
+                        <p class="horario">16:00 - 19:00</p>
+                        <p class="disponibilidad">
+                            <span class="mesas-disponibles" id="tarde-disponibles">15</span>
+                            <span class="mesas-total">/ 15 mesas</span>
+                        </p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="tarde-progress"></div>
+                        </div>
+                    </div>
+
+                    <div class="turno-card">
+                        <h3>🌙 Noche</h3>
+                        <p class="horario">20:00 - 23:00</p>
+                        <p class="disponibilidad">
+                            <span class="mesas-disponibles" id="noche-disponibles">15</span>
+                            <span class="mesas-total">/ 15 mesas</span>
+                        </p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="noche-progress"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reservations-container">
+                <h2>Reservas Actuales</h2>
+                <div id="reservationsList" class="reservations-list"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Sucot 2025 - Chag Sameach! 🎉</p>
+        </footer>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
