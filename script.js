@@ -3,19 +3,27 @@ const MAX_MESAS_POR_TURNO = 15;
 const ADMIN_PASSWORD = 'avivia2025'; // Cambiar esta contraseña
 
 // Estado de la aplicación
-let reservations = JSON.parse(localStorage.getItem('sucotReservations')) || {
-    manana: [],
-    tarde: [],
-    noche: []
-};
+let reservations = {}; // Ahora se sincroniza con Firebase
 
 let isAdminLoggedIn = false;
 
 // Sistema de selección múltiple (reemplaza "carrito")
 let selectedReservations = [];
 
-// Perfil de usuario
+// Perfil de usuario (sigue usando localStorage - es local del usuario)
 let userProfile = JSON.parse(localStorage.getItem('userProfile')) || null;
+
+// Listener de Firebase para sincronización en tiempo real
+reservationsRef.on('value', (snapshot) => {
+    reservations = snapshot.val() || {};
+    updateAvailability();
+    displayReservations();
+    generateAvailabilityCalendar();
+    if (isAdminLoggedIn) {
+        updateAdminStats();
+        displayAdminReservations();
+    }
+});
 
 // Horarios disponibles
 const HORARIOS = {
@@ -288,9 +296,12 @@ function formatFecha(fecha) {
     return fechas[fecha] || fecha;
 }
 
-// Guardar en localStorage
+// Guardar en Firebase (reemplaza localStorage)
 function saveReservations() {
-    localStorage.setItem('sucotReservations', JSON.stringify(reservations));
+    reservationsRef.set(reservations).catch((error) => {
+        console.error('Error al guardar en Firebase:', error);
+        showNotification('Error al guardar. Intente de nuevo.', 'error');
+    });
 }
 
 // Mostrar notificación
