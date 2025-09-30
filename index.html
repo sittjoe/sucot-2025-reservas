@@ -3,14 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservas Sucot 2025</title>
+    <title>Succot Aviva 2025 - Reservas</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>🔐 Acceso Administrador</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="adminPassword">Contraseña:</label>
+                    <input type="password" id="adminPassword" placeholder="Ingrese la contraseña" required>
+                </div>
+                <button type="submit" class="btn-submit">Ingresar</button>
+                <button type="button" class="btn-cancel" onclick="closeLoginModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel" style="display: none;">
+        <div class="admin-header">
+            <h2>📊 Panel de Administración - Succot Aviva 2025</h2>
+            <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+        </div>
+        <div class="admin-content">
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h3>Total Reservas</h3>
+                    <p id="adminTotalReservas" class="stat-number">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Personas</h3>
+                    <p id="adminTotalPersonas" class="stat-number">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Mañana</h3>
+                    <p id="adminManana" class="stat-number">0/15</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Tarde</h3>
+                    <p id="adminTarde" class="stat-number">0/15</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Noche</h3>
+                    <p id="adminNoche" class="stat-number">0/15</p>
+                </div>
+            </div>
+            <div class="admin-actions">
+                <button class="btn-export" onclick="exportReservations()">📥 Exportar CSV</button>
+                <button class="btn-danger" onclick="resetReservations()">🗑️ Limpiar Todo</button>
+            </div>
+            <div class="admin-table">
+                <h3>Todas las Reservas</h3>
+                <div id="adminReservationsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer">
         <header>
-            <h1>🕋 Reservas Sucot 2025</h1>
+            <h1>🕎 Succot Aviva 2025</h1>
             <p class="subtitle">Sistema de Reservación de Mesas</p>
+            <p class="dates-info">📅 Del 13 al 20 de Octubre, 2025</p>
+            <button class="btn-admin" onclick="openLoginModal()">🔐 Admin</button>
         </header>
 
         <main>
@@ -18,11 +75,26 @@
                 <h2>Nueva Reserva</h2>
                 <form id="bookingForm">
                     <div class="form-group">
+                        <label for="fecha">Día de Succot:</label>
+                        <select id="fecha" required>
+                            <option value="">Seleccione un día</option>
+                            <option value="2025-10-13">Lunes 13 Oct - Día 1</option>
+                            <option value="2025-10-14">Martes 14 Oct - Día 2</option>
+                            <option value="2025-10-15">Miércoles 15 Oct - Día 3</option>
+                            <option value="2025-10-16">Jueves 16 Oct - Día 4</option>
+                            <option value="2025-10-17">Viernes 17 Oct - Día 5</option>
+                            <option value="2025-10-18">Sábado 18 Oct - Día 6</option>
+                            <option value="2025-10-19">Domingo 19 Oct - Día 7</option>
+                            <option value="2025-10-20">Lunes 20 Oct - Shemini Atzeret</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="turno">Turno:</label>
                         <select id="turno" required>
                             <option value="">Seleccione un turno</option>
-                            <option value="tarde">Tarde (16:00 - 19:00)</option>
                             <option value="manana">Mañana (09:00 - 12:00)</option>
+                            <option value="tarde">Tarde (16:00 - 19:00)</option>
                             <option value="noche">Noche (20:00 - 23:00)</option>
                         </select>
                     </div>
@@ -89,7 +161,7 @@
         </main>
 
         <footer>
-            <p>Sucot 2025 - Chag Sameach! 🎉</p>
+            <p>Succot Aviva 2025 - Chag Sameach! 🎉</p>
         </footer>
     </div>
 
