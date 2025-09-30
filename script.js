@@ -730,6 +730,17 @@ function addToSelection() {
         return;
     }
 
+    // Verificar si el departamento ya tiene reserva en este turno (en BD o en selección)
+    const deptoExisteEnBD = reservations[key].some(r => r.depto.toLowerCase() === depto.toLowerCase());
+    const deptoExisteEnSeleccion = selectedReservations.some(item =>
+        item.fecha === fecha && item.turno === turno && item.depto.toLowerCase() === depto.toLowerCase()
+    );
+
+    if (deptoExisteEnBD || deptoExisteEnSeleccion) {
+        showNotification('⚠️ Este departamento ya tiene una reserva en este turno y día', 'warning');
+        return;
+    }
+
     // Agregar al carrito
     selectedReservations.push({
         fecha,
@@ -743,9 +754,14 @@ function addToSelection() {
     updateSelectionDisplay();
     showNotification('✅ Agregado a tu selección', 'success');
 
-    // Limpiar solo fecha y turno
+    // Scroll al panel de selección
+    const panel = document.getElementById('multipleReservationsPanel');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Limpiar solo fecha, turno y número de personas (mantener datos personales)
     document.getElementById('fecha').value = '';
     document.getElementById('turno').value = '';
+    document.getElementById('availabilityIndicator').innerHTML = '';
 }
 
 // Actualizar visualización de selección
@@ -764,16 +780,25 @@ function updateSelectionDisplay() {
     countBadge.textContent = selectedReservations.length;
     confirmCount.textContent = selectedReservations.length;
 
-    listContainer.innerHTML = selectedReservations.map((item, index) => `
-        <div class="cart-item">
-            <div class="cart-item-info">
-                <strong>${formatFecha(item.fecha)}</strong> - ${item.turno}
-                <br>
-                <small>${item.personas} personas</small>
-            </div>
-            <button class="btn-remove-cart" onclick="removeFromSelection(${index})">❌</button>
+    // Calcular totales
+    const totalPersonas = selectedReservations.reduce((sum, item) => sum + item.personas, 0);
+
+    listContainer.innerHTML = `
+        <div class="selection-summary">
+            <p><strong>Total de reservas:</strong> ${selectedReservations.length}</p>
+            <p><strong>Total de personas:</strong> ${totalPersonas}</p>
         </div>
-    `).join('');
+        ${selectedReservations.map((item, index) => `
+            <div class="cart-item">
+                <div class="cart-item-info">
+                    <strong>${formatFecha(item.fecha)}</strong> - ${item.turno}
+                    <br>
+                    <small>${item.personas} personas</small>
+                </div>
+                <button class="btn-remove-cart" onclick="removeFromSelection(${index})">❌</button>
+            </div>
+        `).join('')}
+    `;
 }
 
 // Remover del carrito
@@ -800,6 +825,7 @@ function confirmMultipleReservations() {
     }
 
     let successCount = 0;
+    let failedReservations = [];
     let codes = [];
 
     selectedReservations.forEach(item => {
@@ -809,8 +835,24 @@ function confirmMultipleReservations() {
             reservations[key] = [];
         }
 
-        // Verificar disponibilidad
-        if (reservations[key].length < MAX_MESAS_POR_TURNO) {
+        // Re-validar disponibilidad en tiempo real
+        const currentAvailability = MAX_MESAS_POR_TURNO - reservations[key].length;
+
+        // Re-validar que el departamento no haya reservado mientras tanto
+        const deptoYaReservo = reservations[key].some(r => r.depto.toLowerCase() === item.depto.toLowerCase());
+
+        if (currentAvailability <= 0) {
+            failedReservations.push({
+                ...item,
+                reason: 'Sin disponibilidad'
+            });
+        } else if (deptoYaReservo) {
+            failedReservations.push({
+                ...item,
+                reason: 'Departamento ya tiene reserva'
+            });
+        } else {
+            // Proceder con la reserva
             const reservation = {
                 id: Date.now() + successCount,
                 fecha: item.fecha,
@@ -838,6 +880,7 @@ function confirmMultipleReservations() {
     saveReservations();
     updateAvailability();
     displayReservations();
+    generateAvailabilityCalendar(); // Auto-actualizar calendario
 
     // Guardar perfil
     if (selectedReservations.length > 0) {
@@ -855,7 +898,13 @@ function confirmMultipleReservations() {
     selectedReservations = [];
     updateSelectionDisplay();
 
-    showNotification(`¡${successCount} reservas confirmadas! 🎉`, 'success');
+    // Notificación con resumen
+    if (failedReservations.length > 0) {
+        showNotification(`✅ ${successCount} confirmadas | ⚠️ ${failedReservations.length} fallidas`, 'warning');
+        console.warn('Reservas fallidas:', failedReservations);
+    } else {
+        showNotification(`¡${successCount} reservas confirmadas! 🎉`, 'success');
+    }
 }
 
 // Mostrar confirmación múltiple
@@ -864,17 +913,53 @@ function showMultipleConfirmation(codes) {
     const details = document.getElementById('confirmationDetails');
     const codeElement = document.getElementById('confirmationCode');
 
+    // Crear string con todos los códigos para copiar
+    const allCodes = codes.map(c => `${formatFecha(c.fecha)} ${c.turno}: ${c.codigo}`).join('\n');
+
     details.innerHTML = `
         <h4>Resumen de Reservas:</h4>
         ${codes.map(c => `
             <p><strong>${formatFecha(c.fecha)}</strong> - ${c.turno}</p>
             <p style="margin-left: 20px;">Código: <strong>${c.codigo}</strong></p>
         `).join('')}
+        <button class="btn-copy-codes" onclick="copyToClipboard(\`${allCodes}\`)">
+            📋 Copiar Todos los Códigos
+        </button>
     `;
     codeElement.textContent = 'Ver arriba';
 
     box.style.display = 'block';
     box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Copiar códigos al portapapeles
+function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification('📋 Códigos copiados al portapapeles', 'success');
+        }).catch(() => {
+            fallbackCopy(text);
+        });
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+// Fallback para navegadores antiguos
+function fallbackCopy(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-9999px';
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showNotification('📋 Códigos copiados al portapapeles', 'success');
+    } catch (err) {
+        showNotification('No se pudo copiar. Por favor, cópielos manualmente.', 'warning');
+    }
+    document.body.removeChild(textArea);
 }
 
 // ===== FUNCIONES DE PERFIL =====

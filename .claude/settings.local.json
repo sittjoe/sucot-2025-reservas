@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\n✨ Agregar instrucciones y simplificar flujo de reservas\n\n- Agregar sección de instrucciones paso a paso con diseño visual\n- Eliminar botón \"Reservar Directamente\" para evitar confusión\n- Actualizar flujo a sistema de selección múltiple únicamente\n- Mejorar UX con tarjetas de instrucciones numeradas\n- Añadir nota importante sobre límites y búsqueda\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\n✨ Agregar instrucciones y simplificar flujo de reservas\n\n- Agregar sección de instrucciones paso a paso con diseño visual\n- Eliminar botón \"Reservar Directamente\" para evitar confusión\n- Actualizar flujo a sistema de selección múltiple únicamente\n- Mejorar UX con tarjetas de instrucciones numeradas\n- Añadir nota importante sobre límites y búsqueda\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\n✨ Mejoras de UX y validación en sistema de reservas\n\n**Mejoras de UX:**\n- Auto-actualizar calendario después de confirmar reservas\n- Mantener número de personas en formulario para facilitar múltiples reservas\n- Scroll automático al panel de selección al agregar reserva\n- Botón para copiar códigos de confirmación al portapapeles\n\n**Validaciones mejoradas:**\n- Validar departamento duplicado antes de agregar a selección\n- Re-validar disponibilidad en tiempo real al confirmar múltiples reservas\n- Detectar y reportar reservas fallidas con razones específicas\n\n**Mejoras visuales:**\n- Animaciones suaves al agregar reservas (slideIn, pulse)\n- Resumen visual con totales de reservas y personas\n- Feedback visual mejorado con colores y animaciones\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

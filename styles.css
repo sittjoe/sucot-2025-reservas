@@ -1155,6 +1155,75 @@ footer {
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.cart-item {
+    animation: slideInRight 0.3s ease-out;
+}
+
+.selection-badge {
+    animation: pulse 0.5s ease-in-out;
+}
+
+.btn-copy-codes {
+    margin-top: 15px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.btn-copy-codes:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.selection-summary {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    border: 2px solid #667eea;
+}
+
+.selection-summary p {
+    margin: 5px 0;
+    color: #667eea;
+    font-size: 1.05em;
+}
+
+.selection-summary strong {
+    color: #333;
+}
+
 /* ===== RESPONSIVE MEJORADO ===== */
 @media (max-width: 768px) {
     .calendar-grid {
