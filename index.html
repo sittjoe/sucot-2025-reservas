@@ -95,20 +95,20 @@
 
     <div class="container" id="mainContainer">
         <header>
-            <h1>Succot Avivia 2025</h1>
-            <p class="subtitle">Sistema de Reservación de Mesas</p>
-            <p class="dates-info">Del 6 al 13 de Octubre, 2025</p>
-            <button class="btn-admin" onclick="openLoginModal()">Admin</button>
+            <h1>🍂 Succot Avivia 2025 🍇</h1>
+            <p class="subtitle">🌿 Sistema de Reservación de Mesas en la Sucá 🌿</p>
+            <p class="dates-info">📅 Del 6 al 13 de Octubre, 2025</p>
+            <button class="btn-admin" onclick="openLoginModal()">🔑 Admin</button>
         </header>
 
         <main>
             <!-- Instrucciones -->
             <div class="instructions-container">
-                <h2>📋 Cómo Hacer tu Reserva</h2>
+                <h2>📋 Cómo Hacer tu Reserva en la Sucá</h2>
                 <div class="instructions-grid">
                     <div class="instruction-card">
                         <div class="instruction-number">1</div>
-                        <h3>Selecciona Día y Horario</h3>
+                        <h3>📅 Selecciona Día y Horario</h3>
                         <p>Elige el día de Succot (6-13 Oct) y el horario que prefieras:</p>
                         <ul>
                             <li><strong>☀️ Mediodía:</strong> 12-2pm o 2-4pm</li>
@@ -117,26 +117,26 @@
                     </div>
                     <div class="instruction-card">
                         <div class="instruction-number">2</div>
-                        <h3>Completa tus Datos</h3>
+                        <h3>👤 Completa tus Datos</h3>
                         <p>Ingresa tu información personal:</p>
                         <ul>
-                            <li>Nombre completo</li>
-                            <li>Número de departamento</li>
-                            <li>Teléfono</li>
-                            <li>Cantidad de personas</li>
+                            <li>✍️ Nombre completo</li>
+                            <li>🏠 Número de departamento</li>
+                            <li>📱 Teléfono</li>
+                            <li>👥 Cantidad de personas</li>
                         </ul>
                     </div>
                     <div class="instruction-card">
                         <div class="instruction-number">3</div>
-                        <h3>Agrega a tu Selección</h3>
+                        <h3>➕ Agrega a tu Selección</h3>
                         <p>Haz clic en <strong>"➕ Agregar Reserva"</strong> para añadir esta reserva a tu lista.</p>
-                        <p>Puedes agregar múltiples horarios/días antes de confirmar.</p>
+                        <p>🎯 Puedes agregar múltiples horarios/días antes de confirmar.</p>
                     </div>
                     <div class="instruction-card">
                         <div class="instruction-number">4</div>
-                        <h3>Confirma tus Reservas</h3>
+                        <h3>✅ Confirma tus Reservas</h3>
                         <p>Cuando hayas agregado todas las reservas que necesitas, haz clic en <strong>"✅ Confirmar Reservas"</strong>.</p>
-                        <p>Recibirás códigos de confirmación para cada una.</p>
+                        <p>🎫 Recibirás códigos de confirmación para cada una.</p>
                     </div>
                 </div>
                 <div class="instructions-note">
@@ -144,10 +144,10 @@
                 </div>
             </div>
             <div class="booking-form-container">
-                <h2>Nueva Reserva</h2>
+                <h2>🎉 Nueva Reserva</h2>
                 <form id="bookingForm">
                     <div class="form-group">
-                        <label for="fecha">Día de Succot:</label>
+                        <label for="fecha">📅 Día de Succot:</label>
                         <select id="fecha" required>
                             <option value="">Seleccione un día</option>
                             <option value="2025-10-06">Lunes 6 Oct - Día 1 (Yom Tov)</option>
@@ -162,38 +162,38 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="turno">Horario de Reserva:</label>
+                        <label for="turno">🕐 Horario de Reserva:</label>
                         <select id="turno" required onchange="updateAvailabilityIndicator()">
                             <option value="">Seleccione un horario</option>
                             <optgroup label="☀️ Mediodía">
-                                <option value="12:00-14:00">12:00 PM - 2:00 PM</option>
-                                <option value="14:00-16:00">2:00 PM - 4:00 PM</option>
+                                <option value="12:00-14:00">☀️ 12:00 PM - 2:00 PM</option>
+                                <option value="14:00-16:00">☀️ 2:00 PM - 4:00 PM</option>
                             </optgroup>
                             <optgroup label="🌙 Noche">
-                                <option value="19:30-21:30">7:30 PM - 9:30 PM</option>
-                                <option value="21:30-00:00">9:30 PM - 12:00 AM</option>
+                                <option value="19:30-21:30">🌙 7:30 PM - 9:30 PM</option>
+                                <option value="21:30-00:00">🌙 9:30 PM - 12:00 AM</option>
                             </optgroup>
                         </select>
                         <div id="availabilityIndicator" class="availability-indicator"></div>
                     </div>
 
                     <div class="form-group">
-                        <label for="nombre">Nombre Completo:</label>
+                        <label for="nombre">👤 Nombre Completo:</label>
                         <input type="text" id="nombre" placeholder="Ej: Abraham Cohen" required minlength="3">
                     </div>
 
                     <div class="form-group">
-                        <label for="depto">Número de Departamento:</label>
+                        <label for="depto">🏠 Número de Departamento:</label>
                         <input type="text" id="depto" placeholder="Ej: 101, A-5, etc." required>
                     </div>
 
                     <div class="form-group">
-                        <label for="telefono">Teléfono:</label>
+                        <label for="telefono">📱 Teléfono:</label>
                         <input type="tel" id="telefono" placeholder="Ej: 555-1234" required pattern="[0-9\-\+\(\)\s]+">
                     </div>
 
                     <div class="form-group">
-                        <label for="personas">Número de Personas:</label>
+                        <label for="personas">👥 Número de Personas:</label>
                         <input type="number" id="personas" min="1" max="8" placeholder="Ej: 4" required>
                     </div>
 
@@ -231,7 +231,7 @@
 
             <div class="availability-container">
                 <div class="availability-header-mobile">
-                    <h2>Disponibilidad por Horario</h2>
+                    <h2>📊 Disponibilidad por Horario</h2>
                     <button class="btn-toggle-calendar" id="btnToggleCalendar" onclick="toggleCalendar()">
                         <span id="calendarToggleText">👉 Haz clic aquí para ver todos los horarios disponibles</span>
                     </button>
@@ -240,7 +240,7 @@
             </div>
 
             <div class="my-reservations-container">
-                <h2>📋 Mis Reservas</h2>
+                <h2>🔍 Mis Reservas</h2>
                 <div class="search-my-reservations">
                     <input type="text" id="myReservationsSearch" placeholder="Buscar por teléfono o código de confirmación..." oninput="searchMyReservations()">
                     <button class="btn-search" onclick="searchMyReservations()">🔍 Buscar</button>
@@ -251,7 +251,7 @@
         </main>
 
         <footer>
-            <p>Succot Avivia 2025 - Chag Sameach! 🎉</p>
+            <p>🍂 Succot Avivia 2025 - ¡Chag Sameach! 🍇 🕎 🌿</p>
         </footer>
     </div>
 

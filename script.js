@@ -1147,3 +1147,171 @@ function saveWaitlist() {
 firebase.database().ref('waitlist').on('value', (snapshot) => {
     waitlist = snapshot.val() || {};
 });
+
+// ===== MICRO-INTERACCIONES Y VALIDACIÓN =====
+
+// Agregar ripple effect a todos los botones
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('button, .btn-submit, .btn-add-selection, .btn-confirm-multiple');
+    buttons.forEach(btn => {
+        if (!btn.classList.contains('ripple')) {
+            btn.classList.add('ripple');
+        }
+    });
+});
+
+// Validación visual en tiempo real
+function setupFormValidation() {
+    const nombre = document.getElementById('nombre');
+    const depto = document.getElementById('depto');
+    const telefono = document.getElementById('telefono');
+    const personas = document.getElementById('personas');
+    const fecha = document.getElementById('fecha');
+    const turno = document.getElementById('turno');
+
+    if (nombre) {
+        nombre.addEventListener('input', (e) => {
+            if (e.target.value.length >= 3) {
+                e.target.classList.add('valid');
+                e.target.classList.remove('invalid');
+            } else {
+                e.target.classList.remove('valid');
+                if (e.target.value.length > 0) {
+                    e.target.classList.add('invalid');
+                }
+            }
+        });
+    }
+
+    if (telefono) {
+        telefono.addEventListener('input', (e) => {
+            const phonePattern = /[0-9\-\+\(\)\s]+/;
+            if (phonePattern.test(e.target.value) && e.target.value.length >= 7) {
+                e.target.classList.add('valid');
+                e.target.classList.remove('invalid');
+            } else {
+                e.target.classList.remove('valid');
+                if (e.target.value.length > 0) {
+                    e.target.classList.add('invalid');
+                }
+            }
+        });
+    }
+
+    if (depto) {
+        depto.addEventListener('input', (e) => {
+            if (e.target.value.length >= 1) {
+                e.target.classList.add('valid');
+                e.target.classList.remove('invalid');
+            } else {
+                e.target.classList.remove('valid');
+            }
+        });
+    }
+
+    if (personas) {
+        personas.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            if (val >= 1 && val <= 8) {
+                e.target.classList.add('valid');
+                e.target.classList.remove('invalid');
+            } else {
+                e.target.classList.remove('valid');
+                if (e.target.value.length > 0) {
+                    e.target.classList.add('invalid');
+                }
+            }
+        });
+    }
+
+    if (fecha) {
+        fecha.addEventListener('change', (e) => {
+            if (e.target.value) {
+                e.target.classList.add('valid');
+                e.target.classList.remove('invalid');
+            } else {
+                e.target.classList.remove('valid');
+            }
+        });
+    }
+
+    if (turno) {
+        turno.addEventListener('change', (e) => {
+            if (e.target.value) {
+                e.target.classList.add('valid');
+                e.target.classList.remove('invalid');
+            } else {
+                e.target.classList.remove('valid');
+            }
+        });
+    }
+}
+
+// Ejecutar validación al cargar
+document.addEventListener('DOMContentLoaded', setupFormValidation);
+
+// Confetti effect
+function createConfetti() {
+    const colors = ['#D4AF37', '#E07A5F', '#556B2F', '#F4A261', '#2ECC71'];
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 0.5 + 's';
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.body.appendChild(confetti);
+
+            setTimeout(() => confetti.remove(), 3000);
+        }, i * 30);
+    }
+}
+
+// Auto-guardar datos del formulario en localStorage
+function autoSaveFormData() {
+    const formFields = ['nombre', 'depto', 'telefono'];
+
+    formFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // Cargar valor guardado
+            const savedValue = localStorage.getItem(`form_${fieldId}`);
+            if (savedValue && !field.value) {
+                field.value = savedValue;
+            }
+
+            // Guardar en cada cambio
+            field.addEventListener('input', (e) => {
+                localStorage.setItem(`form_${fieldId}`, e.target.value);
+            });
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', autoSaveFormData);
+
+// Mejorar función de confirmación con confetti
+const originalShowConfirmationBox = showConfirmationBox;
+showConfirmationBox = function(reservation, code, key) {
+    originalShowConfirmationBox(reservation, code, key);
+    createConfetti();
+
+    // Agregar bounce al box
+    const box = document.getElementById('confirmationBox');
+    if (box) {
+        box.classList.add('bounce');
+        setTimeout(() => box.classList.remove('bounce'), 1000);
+    }
+};
+
+// Loading state en botones
+function addButtonLoading(button) {
+    button.classList.add('btn-loading');
+    button.disabled = true;
+}
+
+function removeButtonLoading(button) {
+    button.classList.remove('btn-loading');
+    button.disabled = false;
+}

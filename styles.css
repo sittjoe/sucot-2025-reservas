@@ -4,9 +4,24 @@
     box-sizing: border-box;
 }
 
+:root {
+    /* Succot Warm Palette */
+    --gold-primary: #D4AF37;
+    --gold-light: #F4D03F;
+    --olive-green: #556B2F;
+    --olive-light: #6B8E23;
+    --terracotta: #E07A5F;
+    --terracotta-light: #F4A261;
+    --cream: #FAF3E0;
+    --brown-dark: #3E2723;
+    --success: #2ECC71;
+    --warning: #F39C12;
+    --error: #E74C3C;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--olive-green) 0%, var(--brown-dark) 100%);
     min-height: 100vh;
     padding: 20px;
 }
@@ -48,13 +63,13 @@ main {
 .instructions-container {
     margin-bottom: 50px;
     padding: 30px;
-    background: linear-gradient(135deg, #f0f4ff 0%, #f8f0ff 100%);
+    background: linear-gradient(135deg, var(--cream) 0%, #FFF8DC 100%);
     border-radius: 15px;
-    border: 2px solid #667eea;
+    border: 2px solid var(--gold-primary);
 }
 
 .instructions-container h2 {
-    color: #667eea;
+    color: var(--olive-green);
     margin-bottom: 25px;
     font-size: 1.8em;
     text-align: center;
@@ -81,7 +96,7 @@ main {
 }
 
 .instruction-number {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--gold-primary) 0%, var(--terracotta) 100%);
     color: white;
     width: 40px;
     height: 40px;
@@ -92,6 +107,7 @@ main {
     font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
 }
 
 .instruction-card h3 {
@@ -123,7 +139,7 @@ main {
     content: "✓";
     position: absolute;
     left: 0;
-    color: #667eea;
+    color: var(--olive-green);
     font-weight: bold;
 }
 
@@ -131,13 +147,13 @@ main {
     background: white;
     padding: 15px 20px;
     border-radius: 10px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid var(--gold-primary);
     color: #333;
     line-height: 1.6;
 }
 
 .instructions-note strong {
-    color: #667eea;
+    color: var(--olive-green);
 }
 
 .booking-form-container {
@@ -148,7 +164,7 @@ main {
 }
 
 .booking-form-container h2 {
-    color: #667eea;
+    color: var(--olive-green);
     margin-bottom: 25px;
     font-size: 1.8em;
 }
@@ -177,13 +193,14 @@ main {
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
 .btn-submit {
     width: 100%;
     padding: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--gold-primary) 0%, var(--terracotta) 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -195,7 +212,7 @@ main {
 
 .btn-submit:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5);
 }
 
 .btn-submit:active {
@@ -207,7 +224,7 @@ main {
 }
 
 .availability-container h2 {
-    color: #667eea;
+    color: var(--olive-green);
     margin-bottom: 25px;
     font-size: 1.8em;
 }
@@ -268,12 +285,12 @@ main {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    background: linear-gradient(90deg, var(--success) 0%, var(--olive-light) 100%);
     transition: width 0.5s ease;
 }
 
 .reservations-container h2 {
-    color: #667eea;
+    color: var(--olive-green);
     margin-bottom: 25px;
     font-size: 1.8em;
 }
@@ -287,7 +304,7 @@ main {
     background: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid var(--gold-primary);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -296,6 +313,7 @@ main {
 
 .reservation-item:hover {
     transform: translateX(5px);
+    box-shadow: 0 2px 10px rgba(212, 175, 55, 0.2);
 }
 
 .reservation-info {
@@ -303,21 +321,22 @@ main {
 }
 
 .reservation-info strong {
-    color: #667eea;
+    color: var(--olive-green);
 }
 
 .btn-delete {
-    background: #dc3545;
+    background: var(--error);
     color: white;
     border: none;
     padding: 8px 16px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s;
 }
 
 .btn-delete:hover {
-    background: #c82333;
+    background: #C0392B;
+    transform: scale(1.05);
 }
 
 .notification {
@@ -339,15 +358,15 @@ main {
 }
 
 .notification.success {
-    background: #28a745;
+    background: var(--success);
 }
 
 .notification.error {
-    background: #dc3545;
+    background: var(--error);
 }
 
 .notification.warning {
-    background: #ffc107;
+    background: var(--warning);
     color: #333;
 }
 
@@ -375,7 +394,7 @@ footer {
 
 .btn-admin:hover {
     background: white;
-    color: #667eea;
+    color: var(--olive-green);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 }
@@ -415,7 +434,7 @@ footer {
 }
 
 .modal-content h2 {
-    color: #667eea;
+    color: var(--olive-green);
     margin-bottom: 25px;
     text-align: center;
 }
@@ -458,7 +477,7 @@ footer {
 }
 
 .admin-header h2 {
-    color: #667eea;
+    color: var(--olive-green);
     font-size: 2em;
 }
 
@@ -485,12 +504,12 @@ footer {
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--gold-primary) 0%, var(--terracotta) 100%);
     color: white;
     padding: 25px;
     border-radius: 15px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
 .stat-card h3 {
@@ -550,7 +569,7 @@ footer {
 }
 
 .admin-table h3 {
-    color: #667eea;
+    color: var(--olive-green);
     margin-bottom: 20px;
     font-size: 1.5em;
 }
@@ -578,10 +597,10 @@ footer {
 .confirmation-box {
     margin-top: 30px;
     padding: 30px;
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    background: linear-gradient(135deg, var(--success) 0%, var(--olive-light) 100%);
     border-radius: 15px;
     color: white;
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
     animation: slideIn 0.5s ease;
 }
 
@@ -771,7 +790,7 @@ footer {
 }
 
 .my-reservations-container h2 {
-    color: #667eea;
+    color: var(--olive-green);
     margin-bottom: 25px;
     font-size: 1.8em;
 }
@@ -792,22 +811,170 @@ footer {
 
 .search-my-reservations input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
 .btn-search {
     padding: 12px 24px;
-    background: #667eea;
+    background: var(--gold-primary);
     color: white;
     border: none;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s;
 }
 
 .btn-search:hover {
-    background: #5568d3;
+    background: var(--terracotta);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+/* ===== RIPPLE EFFECT ===== */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ripple:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* ===== VALIDACIÓN VISUAL ===== */
+.form-group input.valid,
+.form-group select.valid {
+    border-color: var(--success);
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%232ECC71"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    padding-right: 40px;
+}
+
+.form-group input.invalid,
+.form-group select.invalid {
+    border-color: var(--error);
+}
+
+/* ===== LOADING SPINNER ===== */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* ===== CONFETTI EFFECT ===== */
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100%) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--gold-primary);
+    z-index: 9999;
+    animation: confetti-fall 3s linear forwards;
+}
+
+/* ===== SKELETON LOADER ===== */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    height: 16px;
+    margin: 8px 0;
+}
+
+.skeleton-title {
+    height: 24px;
+    width: 60%;
+    margin: 12px 0;
+}
+
+/* ===== TOAST MEJORADA ===== */
+.notification {
+    bottom: 20px;
+    top: auto;
+    right: 20px;
+    transform: translateY(200px);
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.notification.show {
+    transform: translateY(0);
+}
+
+/* ===== BOUNCE ANIMATION ===== */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.bounce {
+    animation: bounce 1s;
 }
 
 @media (max-width: 768px) {
@@ -856,7 +1023,21 @@ footer {
     .btn-add-selection {
         padding: 18px;
         font-size: 1.1em;
-        min-height: 50px;
+        min-height: 56px;
+        touch-action: manipulation;
+    }
+
+    /* Botones táctiles de 48px mínimo */
+    button, .btn-delete, .btn-search, .btn-logout, .btn-admin {
+        min-height: 48px;
+        touch-action: manipulation;
+    }
+
+    /* Inputs táctiles */
+    .form-group input,
+    .form-group select {
+        min-height: 48px;
+        font-size: 16px; /* Prevenir zoom en iOS */
     }
 
     .turnos-grid {
@@ -912,11 +1093,11 @@ footer {
 
 .date-header {
     text-align: center;
-    color: #667eea;
+    color: var(--olive-green);
     font-size: 1.2em;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #667eea;
+    border-bottom: 2px solid var(--gold-primary);
 }
 
 .time-slots {
@@ -940,17 +1121,17 @@ footer {
 }
 
 .time-slot.available {
-    border-color: #28a745;
+    border-color: var(--success);
 }
 
 .time-slot.almost-full {
-    border-color: #ffc107;
-    background: #fff8e1;
+    border-color: var(--warning);
+    background: #FFF8DC;
 }
 
 .time-slot.full {
-    border-color: #dc3545;
-    background: #ffebee;
+    border-color: var(--error);
+    background: #FFE4E1;
     opacity: 0.7;
     cursor: not-allowed;
 }
@@ -999,16 +1180,16 @@ footer {
 
 .availability-fill {
     height: 100%;
-    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    background: linear-gradient(90deg, var(--success) 0%, var(--olive-light) 100%);
     transition: width 0.5s ease;
 }
 
 .time-slot.almost-full .availability-fill {
-    background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
+    background: linear-gradient(90deg, var(--warning) 0%, var(--terracotta-light) 100%);
 }
 
 .time-slot.full .availability-fill {
-    background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+    background: linear-gradient(90deg, var(--error) 0%, #C0392B 100%);
 }
 
 /* ===== INDICADOR DE DISPONIBILIDAD ===== */
@@ -1048,11 +1229,11 @@ footer {
 /* ===== PANEL DE SELECCIÓN MÚLTIPLE ===== */
 .multiple-reservations-panel {
     margin-top: 30px;
-    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    background: linear-gradient(135deg, var(--cream) 0%, #FFF8DC 100%);
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
-    border: 2px solid #667eea;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+    border: 2px solid var(--gold-primary);
 }
 
 .panel-header {
@@ -1061,17 +1242,17 @@ footer {
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #667eea;
+    border-bottom: 2px solid var(--gold-primary);
 }
 
 .panel-header h3 {
-    color: #667eea;
+    color: var(--olive-green);
     margin: 0;
     font-size: 1.5em;
 }
 
 .selection-badge {
-    background: #667eea;
+    background: var(--gold-primary);
     color: white;
     padding: 8px 18px;
     border-radius: 20px;
@@ -1098,7 +1279,7 @@ footer {
 .btn-confirm-multiple {
     flex: 1;
     padding: 16px;
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    background: linear-gradient(135deg, var(--success) 0%, var(--olive-light) 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -1106,12 +1287,12 @@ footer {
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
 }
 
 .btn-confirm-multiple:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 25px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 6px 25px rgba(46, 204, 113, 0.4);
 }
 
 .btn-clear-selection {
@@ -1134,7 +1315,7 @@ footer {
 .btn-add-selection {
     width: 100%;
     padding: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--gold-primary) 0%, var(--terracotta) 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -1142,12 +1323,12 @@ footer {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
 .btn-add-selection:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
 }
 
 @keyframes fadeIn {
@@ -1189,7 +1370,7 @@ footer {
 .btn-copy-codes {
     margin-top: 15px;
     padding: 12px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--gold-primary) 0%, var(--terracotta) 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -1202,21 +1383,21 @@ footer {
 
 .btn-copy-codes:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
 }
 
 .selection-summary {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(212, 175, 55, 0.1);
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 15px;
     text-align: center;
-    border: 2px solid #667eea;
+    border: 2px solid var(--gold-primary);
 }
 
 .selection-summary p {
     margin: 5px 0;
-    color: #667eea;
+    color: var(--olive-green);
     font-size: 1.05em;
 }
 
@@ -1236,7 +1417,7 @@ footer {
 
 .btn-toggle-calendar {
     padding: 15px 25px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--gold-primary) 0%, var(--terracotta) 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -1244,14 +1425,14 @@ footer {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
     flex: 1;
     min-width: 250px;
 }
 
 .btn-toggle-calendar:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
 }
 
 .btn-toggle-calendar:active {
