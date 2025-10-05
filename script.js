@@ -1,5 +1,6 @@
 // Configuración
-const MAX_MESAS_POR_TURNO = 15;
+const MAX_MESAS_POR_TURNO = 10;
+const MAX_PERSONAS_POR_MESA = 8;
 const ADMIN_PASSWORD = 'avivia2025'; // Cambiar esta contraseña
 
 // Estado de la aplicación
@@ -28,8 +29,11 @@ reservationsRef.on('value', (snapshot) => {
 // Horarios disponibles
 const HORARIOS = {
     'mediodia': ['12:00-14:00', '14:00-16:00'],
-    'noche': ['20:00-21:15', '21:15-22:30']
+    'noche': ['19:30-21:30', '21:30-00:00']
 };
+
+// Waitlist
+let waitlist = {}; // waitlist[key] = [{nombre, depto, telefono, personas, fechaRegistro}]
 
 // Inicializar la aplicación
 document.addEventListener('DOMContentLoaded', () => {
@@ -68,9 +72,17 @@ function handleBooking(e) {
         reservations[key] = [];
     }
 
-    // Validar disponibilidad
+    // Validar número de personas
+    if (personas > MAX_PERSONAS_POR_MESA) {
+        showNotification(`El máximo es ${MAX_PERSONAS_POR_MESA} personas por mesa`, 'error');
+        return;
+    }
+
+    // Validar disponibilidad - si está lleno, ofrecer waitlist
     if (reservations[key].length >= MAX_MESAS_POR_TURNO) {
-        showNotification('Lo sentimos, no hay mesas disponibles para este turno', 'error');
+        if (confirm('Este turno está completo. ¿Desea agregarse a la lista de espera?')) {
+            addToWaitlist(fecha, turno, nombre, depto, telefono, personas);
+        }
         return;
     }
 
@@ -380,7 +392,7 @@ function updateAdminStats() {
             // Identificar turno por el horario específico
             if (r.turno.startsWith('12:00') || r.turno.startsWith('14:00')) {
                 countTarde++;
-            } else if (r.turno.startsWith('20:00') || r.turno.startsWith('21:15')) {
+            } else if (r.turno.startsWith('19:30') || r.turno.startsWith('21:30')) {
                 countNoche++;
             }
         });
@@ -630,8 +642,8 @@ function generateAvailabilityCalendar() {
     const todosLosHorarios = [
         { value: '12:00-14:00', label: '12:00-2:00 PM', periodo: 'mediodia' },
         { value: '14:00-16:00', label: '2:00-4:00 PM', periodo: 'mediodia' },
-        { value: '20:00-21:15', label: '8:00-9:15 PM', periodo: 'noche' },
-        { value: '21:15-22:30', label: '9:15-10:30 PM', periodo: 'noche' }
+        { value: '19:30-21:30', label: '7:30-9:30 PM', periodo: 'noche' },
+        { value: '21:30-00:00', label: '9:30-12:00 AM', periodo: 'noche' }
     ];
 
     let html = '<div class="calendar-grid">';
@@ -1083,3 +1095,55 @@ if (window.innerWidth <= 768) {
         }
     });
 }
+
+// ===== FUNCIONES DE WAITLIST =====
+
+// Agregar a lista de espera
+function addToWaitlist(fecha, turno, nombre, depto, telefono, personas) {
+    const key = `${fecha}-${turno}`;
+
+    if (!waitlist[key]) {
+        waitlist[key] = [];
+    }
+
+    // Verificar si el departamento ya está en waitlist
+    const yaEnWaitlist = waitlist[key].some(w => w.depto.toLowerCase() === depto.toLowerCase());
+    if (yaEnWaitlist) {
+        showNotification('Ya estás en la lista de espera para este turno', 'warning');
+        return;
+    }
+
+    const waitlistEntry = {
+        id: Date.now(),
+        fecha,
+        turno,
+        nombre,
+        depto,
+        telefono,
+        personas,
+        fechaRegistro: new Date().toLocaleString('es-ES')
+    };
+
+    waitlist[key].push(waitlistEntry);
+    saveWaitlist();
+
+    showNotification(`✅ Agregado a lista de espera. Posición: ${waitlist[key].length}`, 'success');
+
+    // Limpiar formulario
+    document.getElementById('fecha').value = '';
+    document.getElementById('turno').value = '';
+    document.getElementById('personas').value = '';
+}
+
+// Guardar waitlist en Firebase
+function saveWaitlist() {
+    const waitlistRef = firebase.database().ref('waitlist');
+    waitlistRef.set(waitlist).catch((error) => {
+        console.error('Error al guardar waitlist:', error);
+    });
+}
+
+// Cargar waitlist desde Firebase
+firebase.database().ref('waitlist').on('value', (snapshot) => {
+    waitlist = snapshot.val() || {};
+});
