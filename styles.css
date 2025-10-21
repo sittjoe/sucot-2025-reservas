@@ -1469,3 +1469,345 @@ footer {
         padding: 18px 20px;
     }
 }
+
+/* ===== NUEVAS FEATURES - MEJORAS DE RENDIMIENTO Y UX ===== */
+
+/* Indicador de conexión */
+.connection-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    z-index: 10000;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.connection-indicator.online {
+    background: var(--success);
+    color: white;
+}
+
+.connection-indicator.offline {
+    background: var(--error);
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+/* Botón de modo oscuro */
+.btn-dark-mode {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+}
+
+.btn-dark-mode:hover {
+    transform: scale(1.1) rotate(15deg);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Modo oscuro */
+body.dark-mode {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+}
+
+body.dark-mode main {
+    background: #1e1e2e;
+    color: #e0e0e0;
+}
+
+body.dark-mode .instructions-container {
+    background: linear-gradient(135deg, #2a2a3e 0%, #1e1e2e 100%);
+    border-color: var(--gold-primary);
+}
+
+body.dark-mode .instruction-card {
+    background: #252535;
+    color: #e0e0e0;
+}
+
+body.dark-mode .booking-form-container,
+body.dark-mode .availability-container,
+body.dark-mode .my-reservations-container {
+    background: #252535;
+    color: #e0e0e0;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #1e1e2e;
+    color: #e0e0e0;
+    border-color: #3a3a4a;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: var(--gold-primary);
+    background: #252535;
+}
+
+body.dark-mode .reservation-item {
+    background: #2a2a3e;
+    border-color: #3a3a4a;
+}
+
+body.dark-mode .date-section {
+    background: #2a2a3e;
+}
+
+body.dark-mode .time-slot {
+    background: #252535;
+    border-color: #3a3a4a;
+}
+
+body.dark-mode .admin-panel {
+    background: #1e1e2e;
+    color: #e0e0e0;
+}
+
+body.dark-mode .admin-content {
+    background: #252535;
+}
+
+body.dark-mode .stat-card {
+    background: #2a2a3e;
+    border-color: #3a3a4a;
+}
+
+/* Códigos QR */
+.qr-code-container {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--cream) 0%, white 100%);
+    border-radius: 15px;
+    text-align: center;
+}
+
+body.dark-mode .qr-code-container {
+    background: linear-gradient(135deg, #2a2a3e 0%, #1e1e2e 100%);
+}
+
+.qr-code-image {
+    max-width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.qr-code-label {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+body.dark-mode .qr-code-label {
+    color: #aaa;
+}
+
+/* Spinner de carga */
+.spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Loading skeletons */
+.skeleton-container {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+}
+
+body.dark-mode .skeleton-container {
+    background: #2a2a3e;
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+body.dark-mode .skeleton {
+    background: linear-gradient(90deg, #2a2a3e 25%, #3a3a4e 50%, #2a2a3e 75%);
+    background-size: 200% 100%;
+}
+
+.skeleton-header {
+    height: 30px;
+    width: 70%;
+}
+
+.skeleton-text {
+    height: 16px;
+    width: 100%;
+}
+
+.skeleton-button {
+    height: 40px;
+    width: 150px;
+    margin-top: 15px;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Gráficos de estadísticas */
+.stat-chart {
+    margin: 15px 0;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .stat-chart {
+    background: #2a2a3e;
+}
+
+.stat-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--olive-green);
+}
+
+body.dark-mode .stat-label {
+    color: var(--gold-light);
+}
+
+.stat-bar-container {
+    width: 100%;
+    height: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 8px 0;
+}
+
+body.dark-mode .stat-bar-container {
+    background: #1e1e2e;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.stat-value {
+    font-size: 0.9em;
+    color: #666;
+    text-align: right;
+}
+
+body.dark-mode .stat-value {
+    color: #aaa;
+}
+
+/* Mejoras de animación */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Botón con estado de carga */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Validaciones visuales mejoradas */
+input.valid,
+select.valid {
+    border-color: var(--success) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%232ECC71' viewBox='0 0 16 16'%3E%3Cpath d='M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+input.invalid,
+select.invalid {
+    border-color: var(--error) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23E74C3C' viewBox='0 0 16 16'%3E%3Cpath d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+/* Transiciones suaves globales */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+button, a, input, select {
+    transition: all 0.3s ease;
+}
+
+/* Responsive para nuevas features */
+@media (max-width: 768px) {
+    .connection-indicator {
+        top: 10px;
+        right: 10px;
+        font-size: 0.75em;
+        padding: 6px 12px;
+    }
+
+    .btn-dark-mode {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2em;
+        top: 10px;
+        right: 10px;
+    }
+
+    .qr-code-image {
+        max-width: 150px;
+    }
+}

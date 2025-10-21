@@ -5,8 +5,12 @@ const ADMIN_PASSWORD = 'avivia2025'; // Cambiar esta contraseña
 
 // Estado de la aplicación
 let reservations = {}; // Ahora se sincroniza con Firebase
+let reservationsCache = {}; // Cache para optimización
+let lastUpdateTimestamp = 0;
 
 let isAdminLoggedIn = false;
+let isOnline = true;
+let isFirebaseConnected = false;
 
 // Sistema de selección múltiple (reemplaza "carrito")
 let selectedReservations = [];
@@ -14,15 +18,91 @@ let selectedReservations = [];
 // Perfil de usuario (sigue usando localStorage - es local del usuario)
 let userProfile = JSON.parse(localStorage.getItem('userProfile')) || null;
 
-// Listener de Firebase para sincronización en tiempo real
-reservationsRef.on('value', (snapshot) => {
-    reservations = snapshot.val() || {};
+// Debounce helper function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Throttle helper function
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// Detectar estado de conexión
+window.addEventListener('online', () => {
+    isOnline = true;
+    updateConnectionStatus();
+    showNotification('✅ Conexión restaurada', 'success');
+});
+
+window.addEventListener('offline', () => {
+    isOnline = false;
+    updateConnectionStatus();
+    showNotification('⚠️ Sin conexión a internet', 'warning');
+});
+
+// Monitor de conexión Firebase
+const connectedRef = firebase.database().ref('.info/connected');
+connectedRef.on('value', (snap) => {
+    isFirebaseConnected = snap.val() === true;
+    updateConnectionStatus();
+});
+
+function updateConnectionStatus() {
+    const indicator = document.getElementById('connectionIndicator');
+    if (!indicator) {
+        // Crear indicador si no existe
+        const div = document.createElement('div');
+        div.id = 'connectionIndicator';
+        div.className = 'connection-indicator';
+        document.body.appendChild(div);
+    }
+
+    const indicatorEl = document.getElementById('connectionIndicator');
+    if (isFirebaseConnected && isOnline) {
+        indicatorEl.className = 'connection-indicator online';
+        indicatorEl.innerHTML = '🟢 Conectado';
+    } else {
+        indicatorEl.className = 'connection-indicator offline';
+        indicatorEl.innerHTML = '🔴 Sin conexión';
+    }
+}
+
+// Listener de Firebase optimizado con throttling
+const throttledUpdate = throttle(() => {
     updateAvailability();
     displayReservations();
     generateAvailabilityCalendar();
     if (isAdminLoggedIn) {
         updateAdminStats();
         displayAdminReservations();
+    }
+}, 500); // Máximo una actualización cada 500ms
+
+reservationsRef.on('value', (snapshot) => {
+    const newData = snapshot.val() || {};
+    const dataChanged = JSON.stringify(newData) !== JSON.stringify(reservations);
+
+    if (dataChanged) {
+        reservations = newData;
+        reservationsCache = { ...newData };
+        lastUpdateTimestamp = Date.now();
+        throttledUpdate();
     }
 });
 
@@ -137,6 +217,8 @@ function showConfirmationBox(reservation, code, key) {
     const details = document.getElementById('confirmationDetails');
     const codeElement = document.getElementById('confirmationCode');
 
+    const qrCodeHtml = showQRCodeInConfirmation(code);
+
     details.innerHTML = `
         <p><strong>Nombre:</strong> ${reservation.nombre}</p>
         <p><strong>Fecha:</strong> ${formatFecha(reservation.fecha)}</p>
@@ -144,6 +226,7 @@ function showConfirmationBox(reservation, code, key) {
         <p><strong>Departamento:</strong> ${reservation.depto}</p>
         <p><strong>Personas:</strong> ${reservation.personas}</p>
         <p><strong>Teléfono:</strong> ${reservation.telefono}</p>
+        ${qrCodeHtml}
     `;
     codeElement.textContent = code;
 
@@ -310,9 +393,13 @@ function formatFecha(fecha) {
 
 // Guardar en Firebase (reemplaza localStorage)
 function saveReservations() {
-    reservationsRef.set(reservations).catch((error) => {
-        console.error('Error al guardar en Firebase:', error);
-        showNotification('Error al guardar. Intente de nuevo.', 'error');
+    if (!isFirebaseConnected) {
+        showNotification('⚠️ Sin conexión. Los cambios se guardarán cuando se restablezca la conexión.', 'warning');
+        return Promise.reject(new Error('No Firebase connection'));
+    }
+
+    return reservationsRef.set(reservations).catch((error) => {
+        handleError(error, 'saveReservations');
     });
 }
 
@@ -468,8 +555,8 @@ function displayAdminReservations(filteredReservations = null) {
     `).join('');
 }
 
-// Filtrar reservas
-function filterReservations() {
+// Filtrar reservas (con debouncing)
+const filterReservations = debounce(function() {
     currentFilters.fecha = document.getElementById('filterFecha').value;
     currentFilters.turno = document.getElementById('filterTurno').value;
     currentFilters.search = document.getElementById('searchQuery').value.toLowerCase();
@@ -507,7 +594,7 @@ function filterReservations() {
     }
 
     displayAdminReservations(filtered);
-}
+}, 300);
 
 // Exportar reservas a CSV
 function exportReservations() {
@@ -1014,7 +1101,7 @@ function loadProfile() {
 
 // ===== BÚSQUEDA DE MIS RESERVAS =====
 
-function searchMyReservations() {
+const searchMyReservations = debounce(function() {
     const query = document.getElementById('myReservationsSearch').value.trim().toLowerCase();
     const container = document.getElementById('myReservationsList');
 
@@ -1069,7 +1156,8 @@ function searchMyReservations() {
             </button>
         </div>
     `).join('');
-}
+}, 300);
+
 // Toggle calendario en móvil
 function toggleCalendar() {
     const calendar = document.getElementById('availabilityCalendar');
@@ -1250,6 +1338,48 @@ function setupFormValidation() {
 // Ejecutar validación al cargar
 document.addEventListener('DOMContentLoaded', setupFormValidation);
 
+// ===== MODO OSCURO =====
+
+// Cargar preferencia de modo oscuro
+let darkMode = localStorage.getItem('darkMode') === 'true';
+
+function toggleDarkMode() {
+    darkMode = !darkMode;
+    localStorage.setItem('darkMode', darkMode);
+    applyDarkMode();
+    showNotification(darkMode ? '🌙 Modo oscuro activado' : '☀️ Modo claro activado', 'success');
+}
+
+function applyDarkMode() {
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
+// Aplicar modo oscuro al cargar
+document.addEventListener('DOMContentLoaded', () => {
+    applyDarkMode();
+
+    // Crear botón de modo oscuro si no existe
+    if (!document.getElementById('darkModeToggle')) {
+        const header = document.querySelector('header');
+        if (header) {
+            const darkModeBtn = document.createElement('button');
+            darkModeBtn.id = 'darkModeToggle';
+            darkModeBtn.className = 'btn-dark-mode';
+            darkModeBtn.innerHTML = darkMode ? '☀️' : '🌙';
+            darkModeBtn.onclick = () => {
+                toggleDarkMode();
+                darkModeBtn.innerHTML = darkMode ? '☀️' : '🌙';
+            };
+            darkModeBtn.title = 'Alternar modo oscuro/claro';
+            header.appendChild(darkModeBtn);
+        }
+    }
+});
+
 // Confetti effect
 function createConfetti() {
     const colors = ['#D4AF37', '#E07A5F', '#556B2F', '#F4A261', '#2ECC71'];
@@ -1309,9 +1439,124 @@ showConfirmationBox = function(reservation, code, key) {
 function addButtonLoading(button) {
     button.classList.add('btn-loading');
     button.disabled = true;
+    button.dataset.originalText = button.innerHTML;
+    button.innerHTML = '<span class="spinner"></span> Procesando...';
 }
 
 function removeButtonLoading(button) {
     button.classList.remove('btn-loading');
     button.disabled = false;
+    if (button.dataset.originalText) {
+        button.innerHTML = button.dataset.originalText;
+    }
+}
+
+// ===== CÓDIGOS QR PARA CONFIRMACIONES =====
+
+function generateQRCode(text) {
+    // Usar una API pública para generar QR codes
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
+    return qrUrl;
+}
+
+function showQRCodeInConfirmation(code) {
+    const qrImage = generateQRCode(code);
+    return `<div class="qr-code-container">
+        <img src="${qrImage}" alt="Código QR" class="qr-code-image" loading="lazy">
+        <p class="qr-code-label">Escanea este código para guardar tu confirmación</p>
+    </div>`;
+}
+
+// ===== ESTADÍSTICAS VISUALES MEJORADAS =====
+
+function renderStatChart(label, current, max, color) {
+    const percentage = (current / max) * 100;
+    return `
+        <div class="stat-chart">
+            <div class="stat-label">${label}</div>
+            <div class="stat-bar-container">
+                <div class="stat-bar-fill" style="width: ${percentage}%; background: ${color}"></div>
+            </div>
+            <div class="stat-value">${current} / ${max}</div>
+        </div>
+    `;
+}
+
+// ===== LOADING SKELETONS =====
+
+function showLoadingSkeleton(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="skeleton-container">
+            <div class="skeleton skeleton-header"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-button"></div>
+        </div>
+    `.repeat(3);
+}
+
+// ===== MANEJO DE ERRORES MEJORADO =====
+
+function handleError(error, context = '') {
+    console.error(`Error en ${context}:`, error);
+
+    let message = 'Ha ocurrido un error. Por favor, intente nuevamente.';
+
+    if (!isOnline) {
+        message = '⚠️ Sin conexión a internet. Revise su conexión.';
+    } else if (!isFirebaseConnected) {
+        message = '⚠️ No se puede conectar a la base de datos. Intente más tarde.';
+    } else if (error.code === 'PERMISSION_DENIED') {
+        message = '🔒 Permisos insuficientes. Contacte al administrador.';
+    } else if (error.message) {
+        message = error.message;
+    }
+
+    showNotification(message, 'error');
+
+    // Log para debugging
+    if (window.console && console.error) {
+        console.error('Error details:', {
+            context,
+            error,
+            isOnline,
+            isFirebaseConnected,
+            timestamp: new Date().toISOString()
+        });
+    }
+}
+
+// Envolver operaciones de Firebase con manejo de errores
+function safeSaveReservations() {
+    return reservationsRef.set(reservations)
+        .catch((error) => {
+            handleError(error, 'guardar reservas');
+            throw error; // Re-throw para que el caller pueda manejarlo
+        });
+}
+
+// ===== OPTIMIZACIÓN DE RENDERIZADO =====
+
+// Cache de elementos del DOM
+const domCache = {
+    availabilityCalendar: null,
+    myReservationsList: null,
+    adminReservationsList: null
+};
+
+function getCachedElement(id) {
+    if (!domCache[id]) {
+        domCache[id] = document.getElementById(id);
+    }
+    return domCache[id];
+}
+
+// Limpiar cache cuando sea necesario
+function clearDomCache() {
+    Object.keys(domCache).forEach(key => {
+        domCache[key] = null;
+    });
 }
